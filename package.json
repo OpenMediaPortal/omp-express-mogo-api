@@ -1,0 +1,19 @@
+{
+    "name": "omp-express-mongo-api",
+    "description": "Open Media Portal API express/mongo implementation",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "4.x",
+        "morgan": "1.x",
+        "mongodb": "2.x"
+    },
+    "devDependencies":{
+        "mocha": "2.x",
+        "supertest": "1.x"
+    },
+    "scripts": {
+        "start": "node server.js",
+        "test": "./node_modules/mocha/bin/mocha"
+    }
+}

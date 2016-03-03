@@ -1,0 +1,19 @@
+# Travis specific docker-compose to handle database and server dependencies
+omp-express-mongo-api:
+    build: .
+    working_dir: /omp
+    volumes:
+        - ./:/omp/:rw
+    environment:
+        NODE_ENV: development
+    ports:
+        - "8001:8001"
+    links:
+        - omp-mongo
+    command: npm start
+
+omp-mongo:
+    image: mongo
+    command: --smallfiles
+    expose:
+        - "27017"
