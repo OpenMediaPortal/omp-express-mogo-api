@@ -9,7 +9,8 @@
  * @author ojourmel
  */
 
-var mongo = require('mongodb');
+var NODE_PATH = process.env.NODE_PATH
+var mongo = require(NODE_PATH + 'mongodb');
 
 var Server = mongo.Server,
     Db = mongo.Db,

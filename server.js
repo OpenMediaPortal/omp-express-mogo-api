@@ -7,10 +7,11 @@
  * @author ojourmel
  */
 
-var express = require('express'),
-    logger = require('morgan'),
-    music = require('./routes/music'),
-    path = require('path');
+// Load global node packages
+var NODE_PATH = process.env.NODE_PATH
+var express = require(NODE_PATH + 'express'),
+    logger = require(NODE_PATH + 'morgan'),
+    music = require('./routes/music');
 
 var app = express();
 

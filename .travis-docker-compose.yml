@@ -6,6 +6,7 @@ omp-express-mongo-api:
         - ./:/omp/:rw
     environment:
         NODE_ENV: development
+        NODE_PATH: /usr/local/lib/node_modules/omp-express-mongo-api/node_modules/
     ports:
         - "8001:8001"
     links:
