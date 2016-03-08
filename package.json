@@ -6,7 +6,11 @@
     "dependencies": {
         "express": "4.x",
         "morgan": "1.x",
-        "mongodb": "2.x"
+        "body-parser": "1.x",
+        "multer": "1.x",
+        "bson": "0.x",
+        "mongodb": "2.x",
+        "mongoose": "4.x"
     },
     "devDependencies":{
         "mocha": "2.x",

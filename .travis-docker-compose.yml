@@ -3,7 +3,10 @@ omp-express-mongo-api:
     build: .
     working_dir: /omp
     volumes:
-        - ./:/omp/:rw
+        - ./package.json:/omp/package.json:rw
+        - ./server.js:/omp/server.js:rw
+        - ./routes/:/omp/routes/:rw
+        - ./dao/:/omp/dao/:rw
     environment:
         NODE_ENV: development
         NODE_PATH: /usr/local/lib/node_modules/omp-express-mongo-api/node_modules/
