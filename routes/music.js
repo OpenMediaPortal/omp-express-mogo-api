@@ -31,7 +31,7 @@ exports.findById = function(req, res) {
         } else {
             res.send(m);
         }
-    })
+    });
 };
 
 /**
@@ -45,9 +45,10 @@ exports.addMusic = function(req, res) {
                         artist: req.body.artist,
                         album: req.body.album,
                         label: req.body.label,
+                        format: req.body.format,
                         path: req.body.path});
 
-    if (m.name && m.path) {
+    if (m.name && m.path && m.format) {
         m.save(function(err){
             if (err) {
                 res.status(500).send({'error':'Internal Server Error'},
@@ -74,9 +75,10 @@ exports.updateMusic = function(req, res) {
             m.artist = req.body.artist;
             m.album = req.body.album;
             m.label = req.body.label;
+            m.format = req.body.format;
             m.path = req.body.path;
 
-            if (m.name && m.path) {
+            if (m.name && m.path && m.format) {
                 m.save(function(err){
                     if (err) {
                         res.status(500).send({'error':'Internal Server Error'},

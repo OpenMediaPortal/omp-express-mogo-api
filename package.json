@@ -10,14 +10,16 @@
         "multer": "1.x",
         "bson": "0.x",
         "mongodb": "2.x",
-        "mongoose": "4.x"
+        "mongoose": "4.x",
+        "mongoose-schema-extend": "0.x",
+        "path": "0.x"
     },
     "devDependencies":{
         "mocha": "2.x",
         "supertest": "1.x"
     },
     "scripts": {
-        "start": "node server.js",
+        "start": "node --harmony_proxies server.js",
         "test": "./node_modules/mocha/bin/mocha"
     }
 }
