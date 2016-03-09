@@ -7,14 +7,13 @@
  * @author ojourmel
  */
 
-// Load global node packages
-var NODE_PATH = process.env.NODE_PATH
-var express = require(NODE_PATH + 'express'),
-    logger = require(NODE_PATH + 'morgan'),
-    bodyParser = require(NODE_PATH + 'body-parser'),
-    multer = require(NODE_PATH + 'multer'),
-    mongoose = require(NODE_PATH + 'mongoose'),
-    music = require('./routes/music');
+var express = require('express'),
+    logger = require('morgan'),
+    bodyParser = require('body-parser'),
+    multer = require('multer'),
+    mongoose = require('mongoose'),
+    music = require('./routes/music'),
+    stream = require('./routes/stream');
 
 var app = express();
 
@@ -38,6 +37,8 @@ app.get('/music/:id', music.findById);
 app.post('/music', music.addMusic);
 app.put('/music/:id', music.updateMusic);
 app.delete('/music/:id', music.deleteMusic);
+
+app.get('/stream/:id', stream.serve);
 
 app.listen(8001);
 console.log('Listening on port 8001...');

@@ -1,4 +1,5 @@
 # Travis specific docker-compose to handle database and server dependencies
+# Mount the README.md as the test file to serve over /stream/
 omp-express-mongo-api:
     build: .
     working_dir: /omp
@@ -7,9 +8,10 @@ omp-express-mongo-api:
         - ./server.js:/omp/server.js:rw
         - ./routes/:/omp/routes/:rw
         - ./dao/:/omp/dao/:rw
+        - ./README.md:/omp/README.md:rw
     environment:
+        LIBRARY_ROOT: /omp/
         NODE_ENV: development
-        NODE_PATH: /usr/local/lib/node_modules/omp-express-mongo-api/node_modules/
     ports:
         - "8001:8001"
     links:

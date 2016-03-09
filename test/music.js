@@ -1,11 +1,12 @@
 /**
 * Testing for music api
 *
-* @see jsonEqual to avoid bad mocha checks of returning JSON
+* @see jsonProperty to avoid bad mocha checks of returning JSON
 *
 * @author ojourmel
 */
-var request = require('supertest');
+var request = require('supertest'),
+    jsonProperty = require('./jsonProperty');
 
 // Connect to an alread running instance of the app
 // This includes are running docker-compose instance
@@ -18,17 +19,19 @@ var music = {
     artist: "TestArtist",
     album: "TestAlbum",
     label: "TestLabel",
+    format: "TestFormat",
     path: "TestPath"
 };
 
 var extra = {
-    name: "ExtraNaem",
+    name: "ExtraName",
     year: "9999",
-    artist: "TestArtist",
-    album: "TestAlbum",
-    label: "TestLabel",
-    path: "TestPath",
-    extra: "EXTRA"
+    artist: "ExtraArtist",
+    album: "ExtraAlbum",
+    label: "ExtraLabel",
+    format: "ExtraFormat",
+    path: "ExtraPath",
+    extra: "Extra"
 
 };
 
@@ -48,14 +51,15 @@ describe('music api', function () {
             .send(music)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonEqual(res.body.name , music.name) ||
-                       jsonEqual(res.body.year , music.year) ||
-                       jsonEqual(res.body.artist , music.artist) ||
-                       jsonEqual(res.body.album , music.album) ||
-                       jsonEqual(res.body.label , music.label) ||
-                       jsonEqual(res.body.path , music.path)
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
 
-                if (r){
+                if (r) {
                     throw new Error(r);
                 }
             })
@@ -78,15 +82,16 @@ describe('music api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
-                var r = jsonEqual(res.body.name , extra.name) ||
-                       jsonEqual(res.body.year , extra.year) ||
-                       jsonEqual(res.body.artist , extra.artist) ||
-                       jsonEqual(res.body.album , extra.album) ||
-                       jsonEqual(res.body.label , extra.label) ||
-                       jsonEqual(res.body.path , extra.path) ||
-                       jsonEqual(res.body.extra , null);
+                var r = jsonProperty.equal(res.body.name , extra.name) ||
+                       jsonProperty.equal(res.body.year , extra.year) ||
+                       jsonProperty.equal(res.body.artist , extra.artist) ||
+                       jsonProperty.equal(res.body.album , extra.album) ||
+                       jsonProperty.equal(res.body.label , extra.label) ||
+                       jsonProperty.equal(res.body.format , extra.format) ||
+                       jsonProperty.equal(res.body.path , extra.path) ||
+                       jsonProperty.equal(res.body.extra , null);
 
-                if (r){
+                if (r) {
                     throw new Error(r);
                 }
 
@@ -105,6 +110,7 @@ describe('music api', function () {
     it('should 400 empty path /music post', function (done) {
         var tmp = {
             name: 'empty',
+            format: 'exe',
             year: 'thing'
         }
 
@@ -117,6 +123,20 @@ describe('music api', function () {
 
     it('should 400 empty name /music post', function (done) {
         var tmp = {
+            year: 'thing',
+            format: 'exe',
+            path: '/path/'
+        }
+        request
+            .post('/music')
+            .set('Content-Type', 'application/json')
+            .send(tmp)
+            .expect(400, done);
+    });
+
+    it('should 400 empty format /music post', function (done) {
+        var tmp = {
+            name: 'name',
             year: 'thing',
             path: '/path/'
         }
@@ -147,14 +167,15 @@ describe('music api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
-                var r = jsonEqual(res.body.name , music.name) ||
-                       jsonEqual(res.body.year , music.year) ||
-                       jsonEqual(res.body.artist , music.artist) ||
-                       jsonEqual(res.body.album , music.album) ||
-                       jsonEqual(res.body.label , music.label) ||
-                       jsonEqual(res.body.path , music.path)
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
 
-                if (r){
+                if (r) {
                     throw new Error(r);
                 }
 
@@ -179,14 +200,15 @@ describe('music api', function () {
             .send(music)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonEqual(res.body.name , music.name) ||
-                       jsonEqual(res.body.year , music.year) ||
-                       jsonEqual(res.body.artist , music.artist) ||
-                       jsonEqual(res.body.album , music.album) ||
-                       jsonEqual(res.body.label , music.label) ||
-                       jsonEqual(res.body.path , music.path)
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
 
-                if (r){
+                if (r) {
                     throw new Error(r);
                 }
             })
@@ -212,14 +234,15 @@ describe('music api', function () {
             .get('/music/' + music._id)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonEqual(res.body.name , music.name) ||
-                       jsonEqual(res.body.year , music.year) ||
-                       jsonEqual(res.body.artist , music.artist) ||
-                       jsonEqual(res.body.album , music.album) ||
-                       jsonEqual(res.body.label , music.label) ||
-                       jsonEqual(res.body.path , music.path)
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
 
-                if (r){
+                if (r) {
                     throw new Error(r);
                 }
             })
@@ -259,16 +282,3 @@ describe('music api', function () {
     });
 
 });
-
-/**
- * @TODO Make this function global to all testing scripts
- *
- */
-function jsonEqual(j1, j2)
-{
-    if (j1 != j2) {
-        return "Error: " + j1 + " != " + j2;
-    } else {
-        return null;
-    }
-}
