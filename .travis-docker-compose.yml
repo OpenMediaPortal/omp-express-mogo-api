@@ -6,11 +6,13 @@ omp-express-mongo-api:
     volumes:
         - ./package.json:/omp/package.json:rw
         - ./server.js:/omp/server.js:rw
+        - ./config.js:/omp/config.js:rw
         - ./routes/:/omp/routes/:rw
         - ./dao/:/omp/dao/:rw
+        - ./.travis-omp-config.yml:/omp/omp-config.yml:rw
         - ./README.md:/omp/README.md:rw
     environment:
-        LIBRARY_ROOT: /omp/
+        OMP_LIBRARY_ROOT: /omp/
         NODE_ENV: development
     ports:
         - "8001:8001"

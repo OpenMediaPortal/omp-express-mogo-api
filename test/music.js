@@ -8,8 +8,6 @@
 var request = require('supertest'),
     jsonProperty = require('./jsonProperty');
 
-// Connect to an alread running instance of the app
-// This includes are running docker-compose instance
 request = request("http://localhost:8001");
 
 // populate the database with a few items:
@@ -40,8 +38,8 @@ describe('music api', function () {
     it('should respond to an empty /music get', function (done) {
         request
             .get('/music')
-            .expect([])
-            .expect(200, done);
+            .expect(200)
+            .expect([], done);
     });
 
     it('should respond to /music post', function (done) {
@@ -49,6 +47,7 @@ describe('music api', function () {
             .post('/music')
             .set('Content-Type', 'application/json')
             .send(music)
+            .expect(201)
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonProperty.equal(res.body.name , music.name) ||
@@ -63,7 +62,6 @@ describe('music api', function () {
                     throw new Error(r);
                 }
             })
-            .expect(200)
             .end(function (err, res) {
                 music._id = res.body._id;
                 if (err) {
@@ -79,6 +77,7 @@ describe('music api', function () {
             .post('/music')
             .set('Content-Type', 'application/json')
             .send(extra)
+            .expect(201)
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
@@ -96,7 +95,6 @@ describe('music api', function () {
                 }
 
             })
-            .expect(200)
             .end(function (err, res) {
                 extra._id = res.body._id;
                 if (err) {
@@ -147,23 +145,62 @@ describe('music api', function () {
             .expect(400, done);
     });
 
+    it('should 400 empty path /music put', function (done) {
+        var tmp = {
+            name: 'empty',
+            format: 'exe',
+            year: 'thing'
+        }
+
+        request
+            .put('/music/' + music._id)
+            .set('Content-Type', 'application/json')
+            .send(tmp)
+            .expect(400, done);
+    });
+
+    it('should 400 empty name /music put', function (done) {
+        var tmp = {
+            year: 'thing',
+            format: 'exe',
+            path: '/path/'
+        }
+        request
+            .put('/music/' + music._id)
+            .set('Content-Type', 'application/json')
+            .send(tmp)
+            .expect(400, done);
+    });
+
+    it('should 400 empty format /music put', function (done) {
+        var tmp = {
+            name: 'name',
+            year: 'thing',
+            path: '/path/'
+        }
+        request
+            .put('/music/' + music._id)
+            .set('Content-Type', 'application/json')
+            .send(tmp)
+            .expect(400, done);
+    });
+
     it('should respond to /music get', function (done) {
         request
             .get('/music')
-            .expect('Content-Type', /json/)
             .expect(200, done);
     });
 
     it('should 404 a bad id to /music get', function (done) {
         request
             .get('/music/' + 'not here')
-            .expect('Content-Type', /json/)
             .expect(404, done);
     });
 
     it('should respond to /music/:id get ', function (done) {
         request
             .get('/music/' + music._id)
+            .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
@@ -180,7 +217,6 @@ describe('music api', function () {
                 }
 
             })
-            .expect(200)
             .end(function (err, res) {
                 if (err) {
                     done(err);
@@ -191,13 +227,14 @@ describe('music api', function () {
     });
 
 
-    it('should respond to /music/:id put ', function (done) {
+    it('should respond to /music/:id patch ', function (done) {
         music.year = "1111";
 
         request
-            .put('/music/' + music._id)
+            .patch('/music/' + music._id)
             .set('Content-Type', 'application/json')
-            .send(music)
+            .send({'year':music.year})
+            .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonProperty.equal(res.body.name , music.name) ||
@@ -212,7 +249,39 @@ describe('music api', function () {
                     throw new Error(r);
                 }
             })
+            .end(function (err, res) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            });
+    });
+
+    it('should 404 a bad id to /music patch', function (done) {
+        request
+            .patch('/music/' + 'not here')
+            .expect(404, done);
+    });
+
+    it('should respect patch changes to /music/:id get ', function (done) {
+        request
+            .get('/music/' + music._id)
             .expect(200)
+            .expect('Content-Type', /json/)
+            .expect(function(res) {
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
+
+                if (r) {
+                    throw new Error(r);
+                }
+            })
             .end(function (err, res) {
                 if (err) {
                     done(err);
@@ -225,13 +294,19 @@ describe('music api', function () {
     it('should 404 a bad id to /music put', function (done) {
         request
             .put('/music/' + 'not here')
-            .expect('Content-Type', /json/)
             .expect(404, done);
     });
 
-    it('should respect put changes to /music/:id get ', function (done) {
+    it('should respond to /music/:id put ', function (done) {
+        music.year = "2222";
+        delete music.label;
+        delete music.artist;
+
         request
-            .get('/music/' + music._id)
+            .put('/music/' + music._id)
+            .set('Content-Type', 'application/json')
+            .send(music)
+            .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonProperty.equal(res.body.name , music.name) ||
@@ -246,7 +321,33 @@ describe('music api', function () {
                     throw new Error(r);
                 }
             })
+            .end(function (err, res) {
+                if (err) {
+                    done(err);
+                } else {
+                    done();
+                }
+            });
+    });
+
+    it('should respect put changes to /music/:id get ', function (done) {
+        request
+            .get('/music/' + music._id)
             .expect(200)
+            .expect('Content-Type', /json/)
+            .expect(function(res) {
+                var r = jsonProperty.equal(res.body.name , music.name) ||
+                       jsonProperty.equal(res.body.year , music.year) ||
+                       jsonProperty.equal(res.body.artist , music.artist) ||
+                       jsonProperty.equal(res.body.album , music.album) ||
+                       jsonProperty.equal(res.body.label , music.label) ||
+                       jsonProperty.equal(res.body.format , music.format) ||
+                       jsonProperty.equal(res.body.path , music.path);
+
+                if (r) {
+                    throw new Error(r);
+                }
+            })
             .end(function (err, res) {
                 if (err) {
                     done(err);
@@ -277,8 +378,8 @@ describe('music api', function () {
     it('should finish empty /music get', function (done) {
         request
             .get('/music')
-            .expect([])
-            .expect(200, done);
+            .expect(200)
+            .expect([], done);
     });
 
 });

@@ -1,11 +1,14 @@
 /**
  * @fileoverview Generic file serving endpoint
  *
+ * Assume paths are relative to the *LIBRARY_ROOT*. This may present some issues
+ * when using multiple folders for each MUSIC, MOVIE, etc library
+ *
  * @author ojourmel
  */
 
-var LIBRARYROOT = process.env.LIBRARY_ROOT;
 var file = require('../dao/file'),
+    config = require('../config'),
     fs = require('fs'),
     path = require('path');
 
@@ -14,12 +17,12 @@ var file = require('../dao/file'),
  * get /serve/:id
  *
  */
-exports.serve = function(req, res) {
+exports.show = function(req, res) {
     file.findOne({_id: req.params.id}).lean().exec(function(err, f) {
         if (err || !f) {
             res.status(404).send({'error':'Not Found'});
         } else {
-            var filepath = path.join(LIBRARYROOT, f.path);
+            var filepath = path.join(config.LIBRARY_ROOT, f.path);
             var readStream = fs.createReadStream(filepath);
 
             readStream.on('open', function () {
