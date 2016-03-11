@@ -1,0 +1,7 @@
+LIBRARY:
+    MUSIC: []
+    PHOTOS: []
+    TV: []
+    MOVIES: []
+    OTHER: []
+API_PORT: 8001

@@ -14,6 +14,8 @@ Use [OpenMediaPortal](https://github.com/OpenMediaPortal/OpenMediaPortal) to get
 
    * [Commit Message Format](http://chris.beams.io/posts/git-commit/)
 
+   * [API Best Practices](http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#requirements)
+
 ## Testing
 
 [![Build Status](https://travis-ci.org/OpenMediaPortal/omp-express-mongo-api.svg?branch=master)](https://travis-ci.org/OpenMediaPortal/omp-express-mongo-api)

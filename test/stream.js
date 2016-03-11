@@ -8,8 +8,6 @@
 var request = require('supertest'),
     jsonProperty = require('./jsonProperty');
 
-// Connect to an alread running instance of the app
-// This includes are running docker-compose instance
 request = request("http://localhost:8001");
 
 // Use the README.md file for testing purposes
@@ -43,8 +41,8 @@ describe('stream api', function () {
                 // here is the actual test
                 request
                     .get('/stream/' + file._id)
-                    .expect('Content-Type', new RegExp('^' + file.format + '.*'))
                     .expect(200)
+                    .expect('Content-Type', new RegExp('^' + file.format + '.*'))
                     .end(function (err, res) {
 
                         // Clean up test data, again, dependent on /music/
