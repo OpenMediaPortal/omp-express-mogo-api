@@ -20,24 +20,24 @@ config.LIBRARY_ROOT = process.env.OMP_LIBRARY_ROOT || '/srv/data/';
 
 // initalize all possible options so that we can freeze config
 config.raw = {};
-config.API_PORT = 8001;
-config.LIBRARY = {};
-config.LIBRARY.MUSIC = [];
-config.LIBRARY.PHOTOS = [];
-config.LIBRARY.TV = [];
-config.LIBRARY.MOVIES = [];
-config.LIBRARY.OTHER = [];
+config.api_port = 8001;
+config.library = {};
+config.library.music = [];
+config.library.photos = [];
+config.library.tv = [];
+config.library.movies = [];
+config.library.other = [];
 
 // Throw an exception on bad config path
 config.load = function() {
     this.raw = yaml.safeLoad(fs.readFileSync(this.CONFIG_PATH));
-    this.LIBRARY = this.raw.LIBRARY;
-    this.API_PORT = this.raw.API_PORT;
+    this.library = this.raw.library;
+    this.api_port = this.raw.api_port;
 }
 
 config.save = function() {
-    this.raw.LIBRARY = this.LIBRARY;
-    this.raw.API_PORT = this.API_PORT;
+    this.raw.library = this.library;
+    this.raw.api_port = this.api_port;
     fs.writeFileSync(this.CONFIG_PATH, yaml.safeDump(this.raw, {indent: 4}));
 }
 

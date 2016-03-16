@@ -19,7 +19,7 @@ var typeJson = new RegExp('^application/json');
  */
 exports.index = function(req, res) {
     config.load();
-    res.send(config.LIBRARY);
+    res.send(config.library);
 }
 
 /**
@@ -28,9 +28,9 @@ exports.index = function(req, res) {
  * @example /library/music
  */
 exports.show = function(req, res) {
-    var key = req.params.key.toUpperCase();
-    if (config.LIBRARY[key]) {
-        res.send(config.LIBRARY[key]);
+    var key = req.params.key;
+    if (config.library[key]) {
+        res.send(config.library[key]);
     } else {
         res.status(404).send({'error':'Not Found'});
     }
@@ -52,7 +52,7 @@ exports.create = function(req, res) {
     // and add back the types missing in the res
     for (var prop in lib) {
 
-        if (! config.LIBRARY.hasOwnProperty(prop)) {
+        if (! config.library.hasOwnProperty(prop)) {
             return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':prop});
         }
 
@@ -61,15 +61,15 @@ exports.create = function(req, res) {
         }
     }
 
-    for (var prop in config.LIBRARY) {
+    for (var prop in config.library) {
         if (! lib.hasOwnProperty(prop)) {
             lib[prop] = [];
         }
     }
 
-    config.LIBRARY = lib;
+    config.library = lib;
     config.save();
-    res.send(config.LIBRARY);
+    res.send(config.library);
 }
 
 /**
@@ -84,16 +84,16 @@ exports.update = function(req, res) {
     }
 
     var prop = req.body;
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
+    if (! config.library.hasOwnProperty(req.params.key)) {
         return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':req.params.key});
     }
     if (! (prop instanceof Array)) {
         return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':req.params.key});
     }
 
-    config.LIBRARY[req.params.key] = prop
+    config.library[req.params.key] = prop
     config.save();
-    res.send(config.LIBRARY[req.params.key]);
+    res.send(config.library[req.params.key]);
 }
 
 /**
@@ -108,16 +108,16 @@ exports.patch = function(req, res) {
     }
 
     var prop = req.body;
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
+    if (! config.library.hasOwnProperty(req.params.key)) {
         return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':req.params.key});
     }
     if (! (prop instanceof Array)) {
         return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':req.params.key});
     }
 
-    config.LIBRARY[req.params.key].push.apply(config.LIBRARY[req.params.key], prop);
+    config.library[req.params.key].push.apply(config.library[req.params.key], prop);
     config.save();
-    res.send(config.LIBRARY[req.params.key]);
+    res.send(config.library[req.params.key]);
 }
 
 /**
@@ -126,11 +126,11 @@ exports.patch = function(req, res) {
  */
 exports.destroy = function(req, res) {
 
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
+    if (! config.library.hasOwnProperty(req.params.key)) {
         return res.status(404).send({'error':'Not Found'});
     }
 
-    config.LIBRARY[req.params.key] = [];
+    config.library[req.params.key] = [];
     config.save();
     res.status(204).send();
 }

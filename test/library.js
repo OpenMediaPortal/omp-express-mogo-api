@@ -13,11 +13,11 @@ request = request("http://localhost:8001");
 
 // populate the database with a few items:
 var lib = {
-    MUSIC: ['m1','m2'],
-    PHOTOS: ['p1','p2'],
-    TV: ['t1','t2'],
-    MOVIES: ['mo1','mo'],
-    OTHER: ['o1','o2']
+    music: ['m1','m2'],
+    photos: ['p1','p2'],
+    tv: ['t1','t2'],
+    movies: ['mo1','mo'],
+    other: ['o1','o2']
 }
 
 describe('library api', function () {
@@ -28,11 +28,11 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.MUSIC , []) ||
-                       jsonArray.equal(res.body.PHOTOS , []) ||
-                       jsonArray.equal(res.body.TV , []) ||
-                       jsonArray.equal(res.body.MOVIES , []) ||
-                       jsonArray.equal(res.body.OTHER , []);
+                var r = jsonArray.equal(res.body.music , []) ||
+                       jsonArray.equal(res.body.photos , []) ||
+                       jsonArray.equal(res.body.tv , []) ||
+                       jsonArray.equal(res.body.movies , []) ||
+                       jsonArray.equal(res.body.other , []);
 
                 if (r) {
                     throw new Error(r);
@@ -55,11 +55,11 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.MUSIC , lib.MUSIC) ||
-                       jsonArray.equal(res.body.PHOTOS , lib.PHOTOS) ||
-                       jsonArray.equal(res.body.TV , lib.TV) ||
-                       jsonArray.equal(res.body.MOVIES , lib.MOVIES) ||
-                       jsonArray.equal(res.body.OTHER , lib.OTHER);
+                var r = jsonArray.equal(res.body.music , lib.music) ||
+                       jsonArray.equal(res.body.photos , lib.photos) ||
+                       jsonArray.equal(res.body.tv , lib.tv) ||
+                       jsonArray.equal(res.body.movies , lib.movies) ||
+                       jsonArray.equal(res.body.other , lib.other);
 
                 if (r) {
                     throw new Error(r);
@@ -92,18 +92,18 @@ describe('library api', function () {
     });
 
     it('should reject non array keys in /library post', function (done) {
-        lib.TV = {'key':'value'};
+        lib.tv = {'key':'value'};
         request
             .post('/library')
             .set('Content-Type', 'application/json')
             .send(lib)
             .expect(400, done);
-        lib.TV = ['t1','t2'];
+        lib.tv = ['t1','t2'];
     });
 
     it('should reject non json /library/:key put', function (done) {
         request
-            .put('/library/MUSIC')
+            .put('/library/music')
             .expect(415, done);
     });
 
@@ -116,22 +116,22 @@ describe('library api', function () {
 
     it('should reject non array keys in /library/:key put', function (done) {
         request
-            .put('/library/MUSIC')
+            .put('/library/music')
             .set('Content-Type', 'application/json')
             .send({'key':'value'})
             .expect(400, done);
     });
 
     it('should respond to valid /library/:key put', function (done) {
-        lib.MUSIC = ['tm1','tm2'];
+        lib.music = ['tm1','tm2'];
         request
-            .put('/library/MUSIC')
+            .put('/library/music')
             .set('Content-Type', 'application/json')
-            .send(lib.MUSIC)
+            .send(lib.music)
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body , lib.MUSIC);
+                var r = jsonArray.equal(res.body , lib.music);
                 if (r) {
                     throw new Error(r);
                 }
@@ -147,7 +147,7 @@ describe('library api', function () {
 
     it('should reject non json /library/:key patch', function (done) {
         request
-            .patch('/library/MUSIC')
+            .patch('/library/music')
             .expect(415, done);
     });
 
@@ -160,7 +160,7 @@ describe('library api', function () {
 
     it('should reject non array keys in /library/:key patch', function (done) {
         request
-            .patch('/library/MUSIC')
+            .patch('/library/music')
             .set('Content-Type', 'application/json')
             .send({'key':'value'})
             .expect(400, done);
@@ -168,9 +168,9 @@ describe('library api', function () {
 
     it('should respond to valid /library/:key patch', function (done) {
         var extra = ['e1','e2'];
-        var combined = lib.MUSIC.concat(extra);
+        var combined = lib.music.concat(extra);
         request
-            .patch('/library/MUSIC')
+            .patch('/library/music')
             .set('Content-Type', 'application/json')
             .send(extra)
             .expect(200)
@@ -192,7 +192,7 @@ describe('library api', function () {
 
     it('should respond to /library/:key delete ', function (done) {
         request
-            .delete('/library/MUSIC')
+            .delete('/library/music')
             .expect(204, done);
     });
 
@@ -203,17 +203,17 @@ describe('library api', function () {
     });
 
     it('should respect delete from /library get', function (done) {
-        lib.MUSIC = [];
+        lib.music = [];
         request
             .get('/library')
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.MUSIC , lib.MUSIC) ||
-                       jsonArray.equal(res.body.PHOTOS , lib.PHOTOS) ||
-                       jsonArray.equal(res.body.TV , lib.TV) ||
-                       jsonArray.equal(res.body.MOVIES , lib.MOVIES) ||
-                       jsonArray.equal(res.body.OTHER , lib.OTHER);
+                var r = jsonArray.equal(res.body.music , lib.music) ||
+                       jsonArray.equal(res.body.photos , lib.photos) ||
+                       jsonArray.equal(res.body.tv , lib.tv) ||
+                       jsonArray.equal(res.body.movies , lib.movies) ||
+                       jsonArray.equal(res.body.other , lib.other);
 
                 if (r) {
                     throw new Error(r);
@@ -229,11 +229,11 @@ describe('library api', function () {
     });
 
     it('should finish with an empty /library post', function (done) {
-        lib.MUSIC = [];
-        lib.PHOTOS = [];
-        lib.TV = [];
-        lib.MOVIES = [];
-        lib.OTHER = [];
+        lib.music = [];
+        lib.photos = [];
+        lib.tv = [];
+        lib.movies = [];
+        lib.other = [];
         request
             .post('/library')
             .set('Content-Type', 'application/json')
@@ -241,11 +241,11 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.MUSIC , lib.MUSIC) ||
-                       jsonArray.equal(res.body.PHOTOS , lib.PHOTOS) ||
-                       jsonArray.equal(res.body.TV , lib.TV) ||
-                       jsonArray.equal(res.body.MOVIES , lib.MOVIES) ||
-                       jsonArray.equal(res.body.OTHER , lib.OTHER);
+                var r = jsonArray.equal(res.body.music , lib.music) ||
+                       jsonArray.equal(res.body.photos , lib.photos) ||
+                       jsonArray.equal(res.body.tv , lib.tv) ||
+                       jsonArray.equal(res.body.movies , lib.movies) ||
+                       jsonArray.equal(res.body.other , lib.other);
 
                 if (r) {
                     throw new Error(r);

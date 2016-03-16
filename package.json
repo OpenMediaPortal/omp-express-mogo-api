@@ -13,6 +13,7 @@
         "mongoose": "4.x",
         "mongoose-schema-extend": "0.x",
         "path": "0.x",
+        "walk": "2.x",
         "js-yaml": "3.x"
     },
     "devDependencies":{
