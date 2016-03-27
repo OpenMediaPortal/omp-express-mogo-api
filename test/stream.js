@@ -1,7 +1,7 @@
 /**
 * Testing for stream api
 *
-* @see test/music to verify that the /music code is working
+* @see test/file to verify that the /library/other code is working
 * @author ojourmel
 */
 
@@ -17,9 +17,16 @@ if ('coverage' == process.env.NODE_ENV) {
 // This file is mounted in .travis-docker-compose.yml
 var file = {
     name: "readme",
-    mimetype: "text/plain",
-    path: "README.md"
+    mimetype: "text/plain"
 };
+
+// If we are running locally, use a relative path
+// If we are running in docker - give the full path
+if ('coverage' == process.env.NODE_ENV) {
+    file.path = "README.md";
+} else {
+    file.path = "/omp/README.md";
+}
 
 describe('stream api', function () {
 
@@ -29,13 +36,12 @@ describe('stream api', function () {
             .expect(404, done);
     });
 
-
     // chain requests as they are done asynchronously
     it('should respond to /stream/:id get', function (done) {
 
-        // Ugly dependency on /library/music/ to populate test data
+        // Ugly dependency on /library/other/ to populate test data
         request
-            .post('/library/music/')
+            .post('/library/other/')
             .set('Content-Type', 'application/json')
             .send(file)
             .end(function (perr, res) {
@@ -48,9 +54,41 @@ describe('stream api', function () {
                     .expect('Content-Type', new RegExp('^' + file.mimetype + '.*'))
                     .end(function (err, res) {
 
-                        // Clean up test data, again, dependent on /music/
+                        // Clean up test data, again, dependent on /other/
                         request
-                            .delete('/library/music/' + file._id)
+                            .delete('/library/other/' + file._id)
+                            .end(function (derr, res){
+
+                                if (err) {
+                                    done(err);
+                                } else {
+                                    done();
+                                }
+                            });
+                    });
+            });
+    });
+
+    it('should 404 a bad path /stream/:id get', function (done) {
+        file.path = 'nothere';
+
+        // Ugly dependency on /library/other/ to populate test data
+        request
+            .post('/library/other/')
+            .set('Content-Type', 'application/json')
+            .send(file)
+            .end(function (perr, res) {
+                file._id = res.body._id;
+
+                // here is the actual test
+                request
+                    .get('/stream/' + file._id)
+                    .expect(404)
+                    .end(function (err, res) {
+
+                        // Clean up test data, again, dependent on /other/
+                        request
+                            .delete('/library/other/' + file._id)
                             .end(function (derr, res){
 
                                 if (err) {

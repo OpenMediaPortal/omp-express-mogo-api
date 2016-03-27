@@ -12,7 +12,7 @@ omp-express-mongo-api:
         - ./.travis-omp-config.yml:/omp/omp-config.yml:rw
         - ./README.md:/omp/README.md:rw
     environment:
-        OMP_LIBRARY_ROOT: /omp/
+        OMP_LIBRARY_ROOT: /
         NODE_ENV: development
     ports:
         - "8001:8001"

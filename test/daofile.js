@@ -217,7 +217,7 @@ describe('file parsePath', function () {
         var n = 'path.txt';
         var t = 'text/plain';
 
-        var f = file.parsePath('testlibkey', p, n, t, null);
+        var f = file.parsePath('testlibkey', n, p, t, null);
 
         if (!f) {
             throw new Error('Error: null file');

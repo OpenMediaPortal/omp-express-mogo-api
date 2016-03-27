@@ -123,24 +123,28 @@ exports.update = function(req, res) {
                 var l = config.library[libkey].libpath.length;
                 for (var i=0; i < l; i++){
                     (function(libroot) {
-                        var walker = walk.walk(libroot);
-                        walker.on("files", function (root, stats, next) {
+                        var walker = walk.walk(path.join(config.LIBRARY_ROOT ,libroot).toString());
+                        walker.on("file", function (root, stats, next) {
 
-                            var n = stats[0].name;
+                            var n = stats.name;
                             var t = mime.lookup(n).toString();
-                            var p = path.join(root, n).toString();
+                            var p = "/" + path.join(root, n).toString().substr(config.LIBRARY_ROOT.length);
 
                             if (t.match(config.library[libkey].libmime)) {
                                 var f = file.parsePath(libkey, n, p, t );
-
-                                f.save();
-                                s.status.totalFiles++;
+                                f.save(function () {
+                                    s.status.totalFiles++;
+                                    s.status.syncTime = Date.now() - s.lastSynced;
+                                    s.save();
+                                    next();
+                                });
+                            } else {
+                                s.status.syncTime = Date.now() - s.lastSynced;
+                                s.save();
+                                next();
                             }
-                            s.status.syncTime = Date.now() - s.lastSynced;
-                            s.save();
-                            next();
                         });
-                        walker.on("error", function (root, stat, next) {
+                        walker.on("errors", function (root, stat, next) {
                             next();
                         });
                         walker.on("end", function () {

@@ -13,6 +13,6 @@ library:
         libmime: video
         libpath: []
     other:
-        libmime: ''
+        libmime: application/javascript
         libpath:
-            - /omp/
+            - /omp/routes

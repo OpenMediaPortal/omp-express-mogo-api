@@ -57,7 +57,7 @@ fileSchema.statics.parseJSON = function(libkey, body, f) {
     return f;
 }
 
-fileSchema.statics.parsePath = function(libkey, p, n, t, f) {
+fileSchema.statics.parsePath = function(libkey, n, p, t, f) {
 
     if (config.library.hasOwnProperty(libkey)) {
 
