@@ -26,7 +26,7 @@ exports.show = function(req, res) {
             var readStream = fs.createReadStream(filepath);
 
             readStream.on('open', function () {
-                res.set({'Content-Type': f.format});
+                res.set({'Content-Type': f.mimetype});
                 readStream.pipe(res);
             });
 

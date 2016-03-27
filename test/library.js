@@ -1,38 +1,93 @@
 /**
-* Testing for library api
+* Testing for library route api
 *
-* @see jsonArray to avoid bad mocha checks of returning JSON
+* @see jsonCompare to avoid bad mocha checks of returning JSON
 *
 * @author ojourmel
 */
 
 var request = require('supertest'),
-    jsonArray = require('./jsonArray');
+    jsonCompare = require('./jsonCompare');
 
-request = request("http://localhost:8001");
+/*
+ * Use local application for code coverage.
+ * Run the primary tests through the docker
+ * instance.
+ */
+if ('coverage' == process.env.NODE_ENV) {
+    request = request(require('../server'));
+} else {
+    request = request('http://localhost:8001');
+}
 
 // populate the database with a few items:
 var lib = {
-    music: ['m1','m2'],
-    photos: ['p1','p2'],
-    tv: ['t1','t2'],
-    movies: ['mo1','mo'],
-    other: ['o1','o2']
+    music: {
+        libmime: 'audio',
+        libpath: ['a1','a2']
+    },
+    photos: {
+        libmime: 'image',
+        libpath: ['p1','p2']
+    },
+    tv: {
+        libmime: 'video',
+        libpath: []
+    },
+    movies: {
+        libmime: 'video',
+        libpath: ['m1','m2']
+    },
+    other: {
+        libmime: '',
+        libpath: ['o1','o2']
+    }
+}
+
+
+// stubbed version of the server's config object
+var config = {
+    library: {
+        music: {
+            libmime: 'audio',
+            libpath: []
+        },
+        photos: {
+            libmime: 'image',
+            libpath: []
+        },
+        tv: {
+            libmime: 'video',
+            libpath: []
+        },
+        movies: {
+            libmime: 'video',
+            libpath: []
+        },
+        other: {
+            libmime: '',
+            libpath: ["/omp/"]
+        }
+    }
 }
 
 describe('library api', function () {
-
-    it('should respond to an empty /library get', function (done) {
+    it('should respond to the default /library get', function (done) {
         request
             .get('/library')
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.music , []) ||
-                       jsonArray.equal(res.body.photos , []) ||
-                       jsonArray.equal(res.body.tv , []) ||
-                       jsonArray.equal(res.body.movies , []) ||
-                       jsonArray.equal(res.body.other , []);
+                var r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
+                        jsonCompare.array(res.body.music.libpath , config.library.music.libpath) ||
+                        jsonCompare.property(res.body.photos.libmime , config.library.photos.libmime) ||
+                        jsonCompare.array(res.body.photos.libpath , config.library.photos.libpath) ||
+                        jsonCompare.property(res.body.tv.libmime , config.library.tv.libmime) ||
+                        jsonCompare.array(res.body.tv.libpath , config.library.tv.libpath) ||
+                        jsonCompare.property(res.body.movies.libmime , config.library.movies.libmime) ||
+                        jsonCompare.array(res.body.movies.libpath , config.library.movies.libpath) ||
+                        jsonCompare.property(res.body.other.libmime , config.library.other.libmime) ||
+                        jsonCompare.array(res.body.other.libpath , config.library.other.libpath);
 
                 if (r) {
                     throw new Error(r);
@@ -55,11 +110,16 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.music , lib.music) ||
-                       jsonArray.equal(res.body.photos , lib.photos) ||
-                       jsonArray.equal(res.body.tv , lib.tv) ||
-                       jsonArray.equal(res.body.movies , lib.movies) ||
-                       jsonArray.equal(res.body.other , lib.other);
+                var r = jsonCompare.property(res.body.music.libmime , lib.music.libmime) ||
+                        jsonCompare.array(res.body.music.libpath , lib.music.libpath) ||
+                        jsonCompare.property(res.body.photos.libmime , lib.photos.libmime) ||
+                        jsonCompare.array(res.body.photos.libpath , lib.photos.libpath) ||
+                        jsonCompare.property(res.body.tv.libmime , lib.tv.libmime) ||
+                        jsonCompare.array(res.body.tv.libpath , lib.tv.libpath) ||
+                        jsonCompare.property(res.body.movies.libmime , lib.movies.libmime) ||
+                        jsonCompare.array(res.body.movies.libpath , lib.movies.libpath) ||
+                        jsonCompare.property(res.body.other.libmime , lib.other.libmime) ||
+                        jsonCompare.array(res.body.other.libpath , lib.other.libpath);
 
                 if (r) {
                     throw new Error(r);
@@ -80,58 +140,103 @@ describe('library api', function () {
             .expect(415, done);
     });
 
-    it('should reject non standard keys in /library post', function (done) {
-        lib.extra = ['qwer','zxcv'];
+    it('should reject missing libmime in /library post', function (done) {
+        lib.tv = {libpath: []};
         request
             .post('/library')
             .set('Content-Type', 'application/json')
             .send(lib)
             .expect(400, done);
-
-        delete lib.extra;
+        lib.tv = {libmime: 'video', libpath: []};
     });
 
-    it('should reject non array keys in /library post', function (done) {
-        lib.tv = {'key':'value'};
+    it('should reject null libmime in /library post', function (done) {
+        lib.tv = {libmime: null, libpath: []};
         request
             .post('/library')
             .set('Content-Type', 'application/json')
             .send(lib)
             .expect(400, done);
-        lib.tv = ['t1','t2'];
+        lib.tv = {libmime: 'video', libpath: []};
     });
 
-    it('should reject non json /library/:key put', function (done) {
+    it('should reject missing libpath in /library post', function (done) {
+        lib.tv = {libmime: ''};
         request
-            .put('/library/music')
+            .post('/library')
+            .set('Content-Type', 'application/json')
+            .send(lib)
+            .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
+    });
+
+    it('should reject non array libpath in /library post', function (done) {
+        lib.tv = {libmime: '', libpath: "/path" };
+        request
+            .post('/library')
+            .set('Content-Type', 'application/json')
+            .send(lib)
+            .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
+    });
+
+    it('should reject non json /library put', function (done) {
+        request
+            .put('/library/tv')
             .expect(415, done);
     });
 
-    it('should reject non standard keys in /library/:key put', function (done) {
+    it('should reject missing libmime in /library put', function (done) {
+        lib.tv = {libpath: []};
         request
-            .put('/library/BADKEY')
+            .put('/library/tv')
             .set('Content-Type', 'application/json')
+            .send(lib.tv)
             .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
     });
 
-    it('should reject non array keys in /library/:key put', function (done) {
+    it('should reject null libmime in /library put', function (done) {
+        lib.tv = {libmime: null, libpath: []};
         request
-            .put('/library/music')
+            .put('/library/tv')
             .set('Content-Type', 'application/json')
-            .send({'key':'value'})
+            .send(lib.tv)
             .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
     });
 
-    it('should respond to valid /library/:key put', function (done) {
-        lib.music = ['tm1','tm2'];
+    it('should reject missing libpath in /library put', function (done) {
+        lib.tv = {libmime: ''};
         request
-            .put('/library/music')
+            .put('/library/tv')
             .set('Content-Type', 'application/json')
-            .send(lib.music)
+            .send(lib.tv)
+            .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
+    });
+
+    it('should reject non array libpath in /library put', function (done) {
+        lib.tv = {libmime: '', libpath: "/path" };
+        request
+            .put('/library/tv')
+            .set('Content-Type', 'application/json')
+            .send(lib.tv)
+            .expect(400, done);
+        lib.tv = {libmime: 'video', libpath: []};
+    });
+
+    it('should respond to /library/:libkey put', function (done) {
+        request
+            .put('/library/other')
+            .set('Content-Type', 'application/json')
+            .send(lib.other)
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body , lib.music);
+                var r = jsonCompare.property(res.body.libmime , lib.other.libmime) ||
+                        jsonCompare.array(res.body.libpath , lib.other.libpath);
+
                 if (r) {
                     throw new Error(r);
                 }
@@ -145,107 +250,48 @@ describe('library api', function () {
             });
     });
 
-    it('should reject non json /library/:key patch', function (done) {
-        request
-            .patch('/library/music')
-            .expect(415, done);
-    });
-
-    it('should reject non standard keys in /library/:key patch', function (done) {
-        request
-            .patch('/library/BADKEY')
-            .set('Content-Type', 'application/json')
-            .expect(400, done);
-    });
-
-    it('should reject non array keys in /library/:key patch', function (done) {
-        request
-            .patch('/library/music')
-            .set('Content-Type', 'application/json')
-            .send({'key':'value'})
-            .expect(400, done);
-    });
-
-    it('should respond to valid /library/:key patch', function (done) {
-        var extra = ['e1','e2'];
-        var combined = lib.music.concat(extra);
-        request
-            .patch('/library/music')
-            .set('Content-Type', 'application/json')
-            .send(extra)
-            .expect(200)
-            .expect('Content-Type', /json/)
-            .expect(function(res) {
-                var r = jsonArray.equal(res.body , combined);
-                if (r) {
-                    throw new Error(r);
-                }
-            })
-            .end(function (err, res) {
-                if (err) {
-                    done(err);
-                } else {
-                    done();
-                }
-            });
-    });
-
-    it('should respond to /library/:key delete ', function (done) {
-        request
-            .delete('/library/music')
-            .expect(204, done);
-    });
-
-    it('should 404 bad key to /library/:key delete ', function (done) {
+    it('should 404 bad libkey to /library/:libkey delete ', function (done) {
         request
             .delete('/library/BADKEY')
             .expect(404, done);
     });
 
-    it('should respect delete from /library get', function (done) {
-        lib.music = [];
+    it('should respond to /library/:libkey delete ', function (done) {
         request
-            .get('/library')
-            .expect(200)
-            .expect('Content-Type', /json/)
-            .expect(function(res) {
-                var r = jsonArray.equal(res.body.music , lib.music) ||
-                       jsonArray.equal(res.body.photos , lib.photos) ||
-                       jsonArray.equal(res.body.tv , lib.tv) ||
-                       jsonArray.equal(res.body.movies , lib.movies) ||
-                       jsonArray.equal(res.body.other , lib.other);
+            .delete('/library/music')
+            .expect(204, done);
+    });
 
-                if (r) {
-                    throw new Error(r);
-                }
-            })
-            .end(function (err, res) {
-                if (err) {
-                    done(err);
-                } else {
-                    done();
-                }
-            });
+    it('should 404 duplicate /library/:libkey delete ', function (done) {
+        request
+            .delete('/library/music')
+            .expect(404, done);
+    });
+
+    it('should respect delete from /library get', function (done) {
+        request
+            .get('/library/music')
+            .expect(404, done);
     });
 
     it('should finish with an empty /library post', function (done) {
-        lib.music = [];
-        lib.photos = [];
-        lib.tv = [];
-        lib.movies = [];
-        lib.other = [];
         request
             .post('/library')
             .set('Content-Type', 'application/json')
-            .send(lib)
+            .send(config.library)
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonArray.equal(res.body.music , lib.music) ||
-                       jsonArray.equal(res.body.photos , lib.photos) ||
-                       jsonArray.equal(res.body.tv , lib.tv) ||
-                       jsonArray.equal(res.body.movies , lib.movies) ||
-                       jsonArray.equal(res.body.other , lib.other);
+                var r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
+                        jsonCompare.array(res.body.music.libpath , config.library.music.libpath) ||
+                        jsonCompare.property(res.body.photos.libmime , config.library.photos.libmime) ||
+                        jsonCompare.array(res.body.photos.libpath , config.library.photos.libpath) ||
+                        jsonCompare.property(res.body.tv.libmime , config.library.tv.libmime) ||
+                        jsonCompare.array(res.body.tv.libpath , config.library.tv.libpath) ||
+                        jsonCompare.property(res.body.movies.libmime , config.library.movies.libmime) ||
+                        jsonCompare.array(res.body.movies.libpath , config.library.movies.libpath) ||
+                        jsonCompare.property(res.body.other.libmime , config.library.other.libmime) ||
+                        jsonCompare.array(res.body.other.libpath , config.library.other.libpath);
 
                 if (r) {
                     throw new Error(r);

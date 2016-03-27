@@ -1,6 +1,7 @@
 /**
  * @fileoverview Sync (status) schema
  *
+ * @TODO: Find out why a sync object with no library key is always being inserted into the database
  * @author ojourmel
  */
 
@@ -16,6 +17,23 @@ var syncSchema = new Schema({
     },
     library: {type: String },
     lastSynced: {type: Date, default: Date.now }
-});
+}, { id : false });
+
+syncSchema.statics.init = function(libkey, s) {
+    if (config.library.hasOwnProperty(libkey)) {
+        if (!s) {
+            s = new this();
+        }
+        s.status = {
+                    syncing: false,
+                    syncTime: 0,
+                    totalFiles: 0
+                    };
+        s.library = libkey;
+        s.lastSynced = null;
+    }
+
+    return s;
+}
 
 module.exports = mongoose.model('sync',syncSchema);
