@@ -3,6 +3,8 @@
  *
  * Uses yml parser to interact with omp-config.yml
  *
+ * Allow the omp-config.yml api-port option to be overridden by OMP_API_PORT environment
+ *
  * @author ojourmel
  */
 
@@ -18,26 +20,58 @@ config.MONGO_HOST = process.env.OMP_MONGO_HOST || 'omp-mongo';
 config.LIBRARY_ROOT = process.env.OMP_LIBRARY_ROOT || '/srv/data/';
 
 
-// initalize all possible options so that we can freeze config
 config.raw = {};
-config.API_PORT = 8001;
-config.LIBRARY = {};
-config.LIBRARY.MUSIC = [];
-config.LIBRARY.PHOTOS = [];
-config.LIBRARY.TV = [];
-config.LIBRARY.MOVIES = [];
-config.LIBRARY.OTHER = [];
+config.api_port = process.env.OMP_API_PORT || 8001;
+config.library = {};
+config.library.music =  {
+                            libmime: 'audio',
+                            libpath: []
+                        };
+config.library.photos = {
+                            libmime: 'image',
+                            libpath: []
+                        };
+config.library.tv =     {
+                            libmime: 'video',
+                            libpath: []
+                        };
+config.library.movies = {
+                            libmime: 'video',
+                            libpath: []
+                        };
+config.library.other =  {
+                            libmime: '',
+                            libpath: []
+                        };
 
 // Throw an exception on bad config path
 config.load = function() {
-    this.raw = yaml.safeLoad(fs.readFileSync(this.CONFIG_PATH));
-    this.LIBRARY = this.raw.LIBRARY;
-    this.API_PORT = this.raw.API_PORT;
+    try {
+        this.raw = yaml.safeLoad(fs.readFileSync(this.CONFIG_PATH));
+
+        // Sanitize config input
+        for (var l in this.raw.library) {
+            if ((! this.raw.library[l].hasOwnProperty('libmime')) ||
+                (! this.raw.library[l].hasOwnProperty('libpath')) ||
+                (! (this.raw.library[l].libpath instanceof Array))) {
+                console.log('Removing badly formed library: ' + l);
+                delete this.raw.library[l];
+            } else if (this.raw.library[l].libmime == null) {
+                this.raw.library[l].libmime = '';
+            }
+
+            this.library[l] = this.raw.library[l];
+        }
+
+        this.api_port = process.env.OMP_API_PORT || this.raw.api_port;
+    } catch (e) {
+        // Missing config file - write the defaults.
+        config.save();
+    }
 }
 
 config.save = function() {
-    this.raw.LIBRARY = this.LIBRARY;
-    this.raw.API_PORT = this.API_PORT;
+    this.raw.library = this.library;
     fs.writeFileSync(this.CONFIG_PATH, yaml.safeDump(this.raw, {indent: 4}));
 }
 

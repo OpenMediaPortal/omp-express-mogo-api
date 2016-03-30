@@ -1,7 +1,18 @@
-LIBRARY:
-    MUSIC: []
-    PHOTOS: []
-    TV: []
-    MOVIES: []
-    OTHER: []
-API_PORT: 8001
+api_port: 8001
+library:
+    music:
+        libmime: audio
+        libpath: []
+    photos:
+        libmime: image
+        libpath: []
+    tv:
+        libmime: video
+        libpath: []
+    movies:
+        libmime: video
+        libpath: []
+    other:
+        libmime: application/javascript
+        libpath:
+            - /omp/routes

@@ -17,7 +17,7 @@ branches:
 before_script:
     - docker-compose -f .travis-docker-compose.yml build
     - docker-compose -f .travis-docker-compose.yml up -d
-    - npm install --only=dev
+    - npm install
     - sleep 5
 
 script:

@@ -2,7 +2,7 @@
  * @fileoverview Generic file serving endpoint
  *
  * Assume paths are relative to the *LIBRARY_ROOT*. This may present some issues
- * when using multiple folders for each MUSIC, MOVIE, etc library
+ * when using multiple folders for each music, movie, etc library
  *
  * @author ojourmel
  */
@@ -26,7 +26,7 @@ exports.show = function(req, res) {
             var readStream = fs.createReadStream(filepath);
 
             readStream.on('open', function () {
-                res.set({'Content-Type': f.format});
+                res.set({'Content-Type': f.mimetype});
                 readStream.pipe(res);
             });
 

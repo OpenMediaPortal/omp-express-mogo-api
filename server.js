@@ -13,9 +13,12 @@ var express = require('express'),
     multer = require('multer'),
     mongoose = require('mongoose'),
     config = require('./config'),
-    music = require('./routes/music'),
+    file = require('./routes/file'),
     stream = require('./routes/stream'),
-    library = require('./routes/library');
+    library = require('./routes/library'),
+    sync = require('./routes/sync'),
+    syncdb = require('./dao/sync'),
+    filedb = require('./dao/file');
 
 config.load();
 
@@ -34,36 +37,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(multer({dest:'./uploads/'}).single('photo'));
 
 // Serve endpoint code
+app.get('/sync', sync.index);
+app.get('/sync/:libkey', sync.show);
+app.put('/sync/:libkey', sync.update);
+app.delete('/sync/', sync.destroyAll);
+app.delete('/sync/:libkey', sync.destroy);
 
-/*
- * @TODO: Merge /music/ and /library/ endpoints so that
- *        /library/music/:id get calls music.show
- *        This might require some fancy mongoose modeling
- *        Note that library.show would be overridded with music.index
- *        or some more general file.index
- *
- *        There would have to be some non-generic code when assigning
- *        the various 'extra' file tags for music, movies, etc
- *
- *        Otherwise, the only difference between music.index and tv.index
- *        is the model that is used in MODEL.find().lean).exec(...);
- *
- */
-app.get('/music', music.index);
-app.get('/music/:id', music.show);
-app.post('/music', music.create);
-app.put('/music/:id', music.update);
-app.patch('/music/:id', music.patch);
-app.delete('/music/:id', music.destroy);
+app.get('/library', library.index);
+app.post('/library', library.create);
+app.put('/library/:libkey', library.update);
+app.delete('/library/:libkey', library.destroy);
+
+app.get('/library/:libkey', file.index);
+app.get('/library/:libkey/:id', file.show);
+app.post('/library/:libkey', file.create);
+app.put('/library/:libkey/:id', file.update);
+app.delete('/library/:libkey/:id', file.destroy);
 
 app.get('/stream/:id', stream.show);
 
-app.get('/library/', library.index);
-app.get('/library/:key', library.show);
-app.post('/library', library.create);
-app.put('/library/:key', library.update);
-app.patch('/library/:key', library.patch);
-app.delete('/library/:key', library.destroy);
-
-app.listen(config.API_PORT);
-console.log('Listening on port ' + config.API_PORT);
+module.exports = app.listen(config.api_port, function () {
+    console.log('Listening on port ' + config.api_port);
+});

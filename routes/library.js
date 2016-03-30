@@ -5,9 +5,13 @@
  * and will interact with omp-config.yml file
  *
  * @author ojourmel
+ *
+ * @TODO: Fix this code - the post and puts don't use the new library object config
+ *
  */
 
 var file = require('../dao/file'),
+    sync = require('../dao/sync'),
     config = require('../config');
 
 
@@ -19,21 +23,7 @@ var typeJson = new RegExp('^application/json');
  */
 exports.index = function(req, res) {
     config.load();
-    res.send(config.LIBRARY);
-}
-
-/**
- * get /library/:key
- *
- * @example /library/music
- */
-exports.show = function(req, res) {
-    var key = req.params.key.toUpperCase();
-    if (config.LIBRARY[key]) {
-        res.send(config.LIBRARY[key]);
-    } else {
-        res.status(404).send({'error':'Not Found'});
-    }
+    res.send(config.library);
 }
 
 /**
@@ -46,91 +36,64 @@ exports.create = function(req, res) {
     if (! typeJson.test(req.get('Content-Type'))) {
         return res.status(415).send({'error':'Unsupported Media Type'});
     }
+    config.library = {};
 
     var lib = req.body;
-    // Disallow library types that are not build in to config
-    // and add back the types missing in the res
     for (var prop in lib) {
-
-        if (! config.LIBRARY.hasOwnProperty(prop)) {
-            return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':prop});
-        }
-
-        if (! (lib[prop] instanceof Array)) {
+        if ((!lib[prop].hasOwnProperty('libmime')) ||
+            (lib[prop].libmime == null) ||
+            (!lib[prop].hasOwnProperty('libpath')) ||
+            (!(lib[prop].libpath instanceof Array))) {
             return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':prop});
         }
-    }
 
-    for (var prop in config.LIBRARY) {
-        if (! lib.hasOwnProperty(prop)) {
-            lib[prop] = [];
-        }
+        config.library[prop] = {libmime: lib[prop].libmime, libpath: lib[prop].libpath};
     }
-
-    config.LIBRARY = lib;
     config.save();
-    res.send(config.LIBRARY);
+    res.send(config.library);
 }
 
 /**
- * put /library/:key
+ * put /library/:libkey
  *
- * Replace the key
+ * Replace the libkey
  */
 exports.update = function(req, res) {
+    var libkey = req.params.libkey;
 
     if (! typeJson.test(req.get('Content-Type'))) {
         return res.status(415).send({'error':'Unsupported Media Type'});
     }
 
     var prop = req.body;
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
-        return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':req.params.key});
-    }
-    if (! (prop instanceof Array)) {
-        return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':req.params.key});
+    if ((!prop.hasOwnProperty('libmime')) ||
+        (prop.libmime == null) ||
+        (!prop.hasOwnProperty('libpath')) ||
+        (!(prop.libpath instanceof Array))) {
+        return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':prop});
     }
 
-    config.LIBRARY[req.params.key] = prop
+    config.library[libkey] = prop;
     config.save();
-    res.send(config.LIBRARY[req.params.key]);
+    res.send(config.library[libkey]);
 }
 
 /**
- * patch /library/:key
- *
- * Append to the key
- */
-exports.patch = function(req, res) {
-
-    if (! typeJson.test(req.get('Content-Type'))) {
-        return res.status(415).send({'error':'Unsupported Media Type'});
-    }
-
-    var prop = req.body;
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
-        return res.status(400).send({'error':'Bad Format', 'message':'Invalid Property', 'property':req.params.key});
-    }
-    if (! (prop instanceof Array)) {
-        return res.status(400).send({'error':'Bad Format', 'message':'Invalid Type', 'property':req.params.key});
-    }
-
-    config.LIBRARY[req.params.key].push.apply(config.LIBRARY[req.params.key], prop);
-    config.save();
-    res.send(config.LIBRARY[req.params.key]);
-}
-
-/**
- * delete /library/:key
+ * delete /library/:libkey
  *
  */
 exports.destroy = function(req, res) {
+    var libkey = req.params.libkey;
 
-    if (! config.LIBRARY.hasOwnProperty(req.params.key)) {
+    if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
 
-    config.LIBRARY[req.params.key] = [];
-    config.save();
-    res.status(204).send();
+    file.remove({library: libkey}, function(err) {
+        sync.remove({library: libkey}, function(err) {
+            delete config.library[libkey];
+            config.save();
+            res.status(204).send();
+        });
+    });
 }
