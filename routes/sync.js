@@ -127,11 +127,11 @@ exports.update = function(req, res) {
                         walker.on("file", function (root, stats, next) {
 
                             var n = stats.name;
-                            var t = mime.lookup(n).toString();
-                            var p = "/" + path.join(root, n).toString().substr(config.LIBRARY_ROOT.length);
+                            var m = mime.lookup(stats.name).toString();
+                            var p = "/" + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
 
-                            if (t.match(config.library[libkey].libmime)) {
-                                var f = file.parsePath(libkey, n, p, t );
+                            if (m.match(config.library[libkey].libmime)) {
+                                var f = file.parsePath(libkey, n, p, m );
                                 f.save(function () {
                                     s.status.totalFiles++;
                                     s.status.syncTime = Date.now() - s.lastSynced;

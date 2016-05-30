@@ -26,14 +26,14 @@ exports.array = function (j1, j2)
             var l = j1.length;
             for(var i=0;i<l;i++){
                 if (j1.indexOf(j2[i]) < 0) {
-                        return "Error: " + j1 + " != " + j2 + " As " + j1[i] + " != " + j2[i];
+                        return j1 + " != " + j2 + " As " + j1[i] + " != " + j2[i];
                 }
             }
         } else {
-            return "Error: " + j1 + ", " + j2 + " are not the same length, " + j1.length + ", " + j2.length;
+            return j1 + ", " + j2 + " are not the same length, " + j1.length + ", " + j2.length;
         }
     } else {
-        return "Error: " + j1 + ", " + j2 + " are not both arrays";
+        return j1 + ", " + j2 + " are not both arrays";
     }
 }
 
@@ -59,7 +59,7 @@ exports.array = function (j1, j2)
 exports.property = function (j1, j2)
 {
     if (j1 != j2) {
-        return "Error: " + j1 + " != " + j2;
+        return j1 + " != " + j2;
     } else {
         return null;
     }

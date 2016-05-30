@@ -213,11 +213,11 @@ describe('file parsePath', function () {
         config.library.testlibkey = {libmime: 'text', libpath: []};
 
 
-        var p = '/test/path.txt';
-        var n = 'path.txt';
-        var t = 'text/plain';
+        var path = '/test/path.txt';
+        var name = 'path.txt';
+        var mime = 'text/plain';
 
-        var f = file.parsePath('testlibkey', n, p, t, null);
+        var f = file.parsePath('testlibkey', name, path, mime, null);
 
         if (!f) {
             throw new Error('Error: null file');
@@ -226,9 +226,9 @@ describe('file parsePath', function () {
         f = f.toObject();
 
         var r = jsonCompare.property(f.library ,'testlibkey' ) ||
-                jsonCompare.property(f.name, n) ||
-                jsonCompare.property(f.path, p) ||
-                jsonCompare.property(f.mimetype, t);
+                jsonCompare.property(f.name, name) ||
+                jsonCompare.property(f.path, path) ||
+                jsonCompare.property(f.mimetype, mime);
 
         if (r) {
             throw new Error(r);

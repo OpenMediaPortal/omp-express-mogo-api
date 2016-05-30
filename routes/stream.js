@@ -14,7 +14,7 @@ var file = require('../dao/file'),
 
 
 /**
- * get /serve/:id
+ * get /stream/:id
  *
  */
 exports.show = function(req, res) {

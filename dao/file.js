@@ -15,6 +15,7 @@ var fileSchema = new Schema({
     name: {type: String },
     mimetype: {type: String },
     path: {type: String },
+    title: {type: String },
     year: {type: String },
     artist: {type: String },
     album: {type: String },
@@ -37,6 +38,7 @@ fileSchema.statics.parseJSON = function(libkey, body, f) {
 
             if (lm == 'audio') {
 
+                f.title = body.title;
                 f.artist = body.artist;
                 f.album = body.album;
                 f.year = body.year;
@@ -57,7 +59,7 @@ fileSchema.statics.parseJSON = function(libkey, body, f) {
     return f;
 }
 
-fileSchema.statics.parsePath = function(libkey, n, p, t, f) {
+fileSchema.statics.parsePath = function(libkey, n, p, m, f) {
 
     if (config.library.hasOwnProperty(libkey)) {
 
@@ -68,12 +70,22 @@ fileSchema.statics.parsePath = function(libkey, n, p, t, f) {
         f.library = libkey;
         f.name = n;
         f.path = p;
-        f.mimetype = t;
+        f.mimetype = m;
 
         var lm = config.library[libkey].libmime;
 
         if (lm == 'audio') {
             // parse mp3 tags, or pull from path
+
+            // Assume /artist/alubm/song.ext format
+            // Replace with libtag once V8 issues are resolved
+            // https://github.com/nikhilm/node-taglib/pull/63
+            var info = p.split(path.sep);
+
+            f.title = path.basename(p, path.extname(p));
+            f.album = info[info.length - 2];
+            f.artist = info[info.length - 3];
+
         } else if (lm == 'image') {
             // parse image tags, or pull from path
         } else if (lm == 'video') {
