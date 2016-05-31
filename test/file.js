@@ -50,7 +50,8 @@ var extra = {
 
 var emptyResp = {
     group: ["name"],
-    index: { "name": [] },
+    index: { "name": {} },
+    lookup: {},
     files: []
 }
 

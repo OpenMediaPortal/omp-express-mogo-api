@@ -42,12 +42,15 @@ exports.index = function(req, res) {
      *              "21 Guns" : [[0,0]]
      *          }
      *      },
+     *      lookup: {
+     *          "1234": 0
+     *      }
      *      files: [
      *          {
-     *          id: "1234",
-     *          title: "21 Guns",
-     *          artist : "Green Day",
-     *          album : "21st Century",
+     *              id: "1234",
+     *              title: "21 Guns",
+     *              artist : "Green Day",
+     *              album : "21st Century",
      *          }
      *      ]
      *  }
@@ -56,6 +59,7 @@ exports.index = function(req, res) {
     var f = {
         group: [],
         index: {},
+        lookup: {},
         files: []
     };
     var group = req.query.group;
@@ -127,8 +131,8 @@ exports.index = function(req, res) {
                         }
                     }
                 }
+                f.lookup[f.files[i]._id] = i;
             }
-
             res.send(f);
         }
     });
