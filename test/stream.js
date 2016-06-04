@@ -16,7 +16,7 @@ if ('coverage' == process.env.NODE_ENV) {
 // Use the README.md file for testing purposes
 // This file is mounted in .travis-docker-compose.yml
 var file = {
-    name: "readme",
+    name: "README.md",
     mimetype: "text/plain"
 };
 

@@ -26,6 +26,7 @@ if ('coverage' == process.env.NODE_ENV) {
 // populate the database with a few items:
 var music = {
     name: "TestName",
+    title: "TestTitle",
     year: "0000",
     artist: "TestArtist",
     album: "TestAlbum",
@@ -36,6 +37,7 @@ var music = {
 
 var extra = {
     name: "ExtraName",
+    title: "ExtraTitle",
     year: "9999",
     artist: "ExtraArtist",
     album: "ExtraAlbum",
@@ -46,6 +48,13 @@ var extra = {
 
 };
 
+var emptyResp = {
+    group: ["name"],
+    index: { "name": {} },
+    lookup: {},
+    files: []
+}
+
 describe('file (/library/:libkey) api', function () {
 
     it('should respond to an empty /library/music get', function (done) {
@@ -53,7 +62,7 @@ describe('file (/library/:libkey) api', function () {
             .get('/library/music')
             .expect(200)
             .expect('Content-Type', /json/)
-            .expect([], done);
+            .expect(emptyResp, done);
     });
 
     it('should 404 a bad libkey to /library/:libkey post', function (done) {
@@ -79,6 +88,7 @@ describe('file (/library/:libkey) api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonCompare.property(res.body.name , music.name) ||
+                       jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
@@ -110,6 +120,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(function(res) {
 
                 var r = jsonCompare.property(res.body.name , extra.name) ||
+                       jsonCompare.property(res.body.title , extra.title) ||
                        jsonCompare.property(res.body.year , extra.year) ||
                        jsonCompare.property(res.body.artist , extra.artist) ||
                        jsonCompare.property(res.body.album , extra.album) ||
@@ -135,9 +146,8 @@ describe('file (/library/:libkey) api', function () {
 
     it('should 400 empty path /library/music post', function (done) {
         var tmp = {
-            name: 'empty',
-            mimetype: 'exe',
-            year: 'thing'
+            name: 'empty.exe',
+            mimetype: 'exe'
         }
 
         request
@@ -149,7 +159,6 @@ describe('file (/library/:libkey) api', function () {
 
     it('should 400 empty name /library/music post', function (done) {
         var tmp = {
-            year: 'thing',
             mimetype: 'exe',
             path: '/path/'
         }
@@ -163,7 +172,6 @@ describe('file (/library/:libkey) api', function () {
     it('should 400 empty mimetype /library/music post', function (done) {
         var tmp = {
             name: 'name',
-            year: 'thing',
             path: '/path/'
         }
         request
@@ -176,8 +184,7 @@ describe('file (/library/:libkey) api', function () {
     it('should 400 empty path /library/music put', function (done) {
         var tmp = {
             name: 'empty',
-            mimetype: 'exe',
-            year: 'thing'
+            mimetype: 'exe'
         }
 
         request
@@ -189,7 +196,6 @@ describe('file (/library/:libkey) api', function () {
 
     it('should 400 empty name /library/music put', function (done) {
         var tmp = {
-            year: 'thing',
             mimetype: 'exe',
             path: '/path/'
         }
@@ -203,7 +209,6 @@ describe('file (/library/:libkey) api', function () {
     it('should 400 empty mimetype /library/music put', function (done) {
         var tmp = {
             name: 'name',
-            year: 'thing',
             path: '/path/'
         }
         request
@@ -239,6 +244,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(function(res) {
 
                 var r = jsonCompare.property(res.body.name , music.name) ||
+                       jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
@@ -294,6 +300,7 @@ describe('file (/library/:libkey) api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonCompare.property(res.body.name , music.name) ||
+                       jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
@@ -321,6 +328,7 @@ describe('file (/library/:libkey) api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
                 var r = jsonCompare.property(res.body.name , music.name) ||
+                       jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
@@ -370,7 +378,7 @@ describe('file (/library/:libkey) api', function () {
             .get('/library/music')
             .expect(200)
             .expect('Content-Type', /json/)
-            .expect([], done);
+            .expect(emptyResp, done);
     });
 
 });
