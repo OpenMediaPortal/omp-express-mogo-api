@@ -6,8 +6,6 @@
  *
  * @author ojourmel
  *
- * @TODO: Fix this code - the post and puts don't use the new library object config
- *
  */
 
 var file = require('../dao/file'),

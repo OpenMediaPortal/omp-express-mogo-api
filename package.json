@@ -4,32 +4,36 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "4.x",
-    "morgan": "1.x",
     "body-parser": "1.x",
-    "multer": "1.x",
     "bson": "0.x",
+    "express": "4.x",
+    "js-yaml": "3.x",
+    "mime-types": "2.x",
     "mongodb": "2.x",
     "mongoose": "4.x",
     "mongoose-schema-extend": "0.x",
+    "morgan": "1.x",
+    "multer": "1.x",
+    "musicmetadata": "2.x",
     "path": "0.x",
-    "walk": "2.x",
-    "js-yaml": "3.x",
-    "mime-types": "2.x"
-  }, "devDependencies": {
+    "walk": "2.x"
+  },
+  "devDependencies": {
+    "blanket": "1.x",
     "mocha": "2.x",
-    "mocha-multi": "^0.9.0",
-    "supertest": "1.x",
-    "blanket": "1.x"
-    },
+    "mocha-multi": "0.x",
+    "supertest": "2.x"
+  },
   "scripts": {
-    "start": "node --harmony_proxies server.js",
-    "test": "NODE_ENV=development ./node_modules/mocha/bin/mocha",
-    "coverage": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_MONGO_HOST=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps | grep ompexpressmongoapi_omp-mongo | awk  '{print $1}')) OMP_LIBRARY_ROOT=./ OMP_API_PORT=8002 NODE_ENV=coverage multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha --require blanket --reporter mocha-multi"
+    "start": "node server.js",
+    "test": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_LIBRARY_ROOT=$(pwd) NODE_ENV=development ./node_modules/mocha/bin/mocha",
+    "coverage": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_MONGO_HOST=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps | grep ompexpressmongoapi_omp-mongo | awk  '{print $1}')) OMP_LIBRARY_ROOT=$(pwd) OMP_API_PORT=8002 NODE_ENV=coverage multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha --require blanket --reporter mocha-multi"
   },
   "config": {
     "blanket": {
-      "pattern": [""],
+      "pattern": [
+        ""
+      ],
       "data-cover-never": [
         "node_modules",
         "test"

@@ -20,13 +20,9 @@ var file = {
     mimetype: "text/plain"
 };
 
-// If we are running locally, use a relative path
-// If we are running in docker - give the full path
-if ('coverage' == process.env.NODE_ENV) {
-    file.path = "README.md";
-} else {
-    file.path = "/omp/README.md";
-}
+// Use a relative path regardelss if running in docker or locally.
+// Use OMP_LIBRARY_ROOT to change file location
+file.path = "./README.md";
 
 describe('stream api', function () {
 

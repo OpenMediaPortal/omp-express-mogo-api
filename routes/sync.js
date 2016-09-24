@@ -125,18 +125,29 @@ exports.update = function(req, res) {
                     (function(libroot) {
                         var walker = walk.walk(path.join(config.LIBRARY_ROOT ,libroot).toString());
                         walker.on("file", function (root, stats, next) {
-
                             var n = stats.name;
                             var m = mime.lookup(stats.name).toString();
                             var p = "/" + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
 
                             if (m.match(config.library[libkey].libmime)) {
-                                var f = file.parsePath(libkey, n, p, m );
-                                f.save(function () {
-                                    s.status.totalFiles++;
-                                    s.status.syncTime = Date.now() - s.lastSynced;
-                                    s.save();
-                                    next();
+                                file.parsePath(libkey, n, p, m, function(f) {
+                                    if (f) {
+                                        f.save(function (err) {
+                                            if (err) {
+                                                console.log("Error: " + err);
+                                            }
+                                            s.status.totalFiles++;
+                                            s.status.syncTime = Date.now() - s.lastSynced;
+                                            s.save(function (err) {
+                                                if (err) {
+                                                    console.log("Error: " + err);
+                                                }
+                                                next();
+                                            });
+                                        });
+                                    } else {
+                                        next();
+                                    }
                                 });
                             } else {
                                 s.status.syncTime = Date.now() - s.lastSynced;
