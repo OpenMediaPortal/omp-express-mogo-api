@@ -66,7 +66,7 @@ var config = {
         },
         other: {
             libmime: 'application/javascript',
-            libpath: ["/omp/routes"]
+            libpath: ["/routes"]
         }
     }
 }

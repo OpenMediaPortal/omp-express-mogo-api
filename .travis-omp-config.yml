@@ -15,4 +15,4 @@ library:
     other:
         libmime: application/javascript
         libpath:
-            - /omp/routes
+            - /routes

@@ -30,7 +30,6 @@ var music = {
     year: "0000",
     artist: "TestArtist",
     album: "TestAlbum",
-    label: "TestLabel",
     mimetype: "TestMimeType",
     path: "TestPath"
 };
@@ -41,7 +40,6 @@ var extra = {
     year: "9999",
     artist: "ExtraArtist",
     album: "ExtraAlbum",
-    label: "ExtraLabel",
     mimetype: "ExtraMimeType",
     path: "ExtraPath",
     extra: "Extra"
@@ -53,7 +51,15 @@ var emptyResp = {
     index: { "name": {} },
     lookup: {},
     files: []
-}
+};
+
+var groupsort = {
+    group: ["g1", "g2"],
+    index: { "g1": {},
+             "g2": {} },
+    lookup: {},
+    files: []
+};
 
 describe('file (/library/:libkey) api', function () {
 
@@ -63,6 +69,14 @@ describe('file (/library/:libkey) api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(emptyResp, done);
+    });
+
+    it('should respect group and sort to /library/music get', function (done) {
+        request
+            .get('/library/music?group=g1,g2&sort=s1,s2')
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .expect(groupsort, done);
     });
 
     it('should 404 a bad libkey to /library/:libkey post', function (done) {
@@ -92,7 +106,6 @@ describe('file (/library/:libkey) api', function () {
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
-                       jsonCompare.property(res.body.label , music.label) ||
                        jsonCompare.property(res.body.mimetype , music.mimetype) ||
                        jsonCompare.property(res.body.path , music.path);
 
@@ -124,7 +137,6 @@ describe('file (/library/:libkey) api', function () {
                        jsonCompare.property(res.body.year , extra.year) ||
                        jsonCompare.property(res.body.artist , extra.artist) ||
                        jsonCompare.property(res.body.album , extra.album) ||
-                       jsonCompare.property(res.body.label , extra.label) ||
                        jsonCompare.property(res.body.mimetype , extra.mimetype) ||
                        jsonCompare.property(res.body.path , extra.path) ||
                        jsonCompare.property(res.body.extra , null);
@@ -230,7 +242,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(404, done);
     });
 
-    it('should 404 a bad id to /library/music get', function (done) {
+    it('should 404 a bad id to /library/music/:id get', function (done) {
         request
             .get('/library/music/' + 'not here')
             .expect(404, done);
@@ -248,7 +260,6 @@ describe('file (/library/:libkey) api', function () {
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
-                       jsonCompare.property(res.body.label , music.label) ||
                        jsonCompare.property(res.body.mimetype , music.mimetype) ||
                        jsonCompare.property(res.body.path , music.path);
 
@@ -289,7 +300,6 @@ describe('file (/library/:libkey) api', function () {
 
     it('should respond to /library/music/:id put ', function (done) {
         music.year = "2222";
-        delete music.label;
         delete music.artist;
 
         request
@@ -304,7 +314,6 @@ describe('file (/library/:libkey) api', function () {
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
-                       jsonCompare.property(res.body.label , music.label) ||
                        jsonCompare.property(res.body.mimetype , music.mimetype) ||
                        jsonCompare.property(res.body.path , music.path);
 
@@ -332,7 +341,6 @@ describe('file (/library/:libkey) api', function () {
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
                        jsonCompare.property(res.body.album , music.album) ||
-                       jsonCompare.property(res.body.label , music.label) ||
                        jsonCompare.property(res.body.mimetype , music.mimetype) ||
                        jsonCompare.property(res.body.path , music.path);
 
