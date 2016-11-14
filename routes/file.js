@@ -24,6 +24,7 @@ exports.index = function(req, res) {
 
     /*
      * Response object from /library/music/?group=artist,album,title
+     * Due to the verbose nature of "index", grouping by title is not recommended.
      *
      *  f: {
      *      group: [
@@ -33,28 +34,56 @@ exports.index = function(req, res) {
      *      ],
      *      index: {
      *          artist: {
-     *              "Green Day" : [[0,0]]
+     *              Green Day: {
+     *                  f: [[0,1]],
+     *                  album: ["21st Century", "American Idiot"],
+     *                  title: ["21 Guns", "Boulevard of Broken Dreams"]
+     *              }
      *          },
      *          album: {
-     *              "21st Century" : [[0,0]]
+     *              21st Century: {
+     *                  f: [[0,0]],
+     *                  artist: ["Green Day"]
+     *                  title: ["21 Guns"]
+     *              },
+     *              American Idiot: {
+     *                  f: [[1,1]],
+     *                  artist: ["Green Day"]
+     *                  title: ["Boulevard of Broken Dreams"]
+     *              }
      *          },
      *          title: {
-     *              "21 Guns" : [[0,0]]
+     *              21 Guns: {
+     *                  f: [[0,0]],
+     *                  artist: ["Green Day"]
+     *                  album: ["21st Century"]
+     *              },
+     *              Boulevard of Broken Dreams: {
+     *                  f: [[1,1]],
+     *                  artist: ["Green Day"]
+     *                  album: ["American Idiot"]
+     *              }
      *          }
-     *      },
-     *      lookup: {
-     *          "1234": 0
      *      }
+     *      lookup: {
+     *          123abc: 0,
+     *          456def: 1
+     *      },
      *      files: [
      *          {
-     *              id: "1234",
+     *              id: "123abc",
      *              title: "21 Guns",
      *              artist : "Green Day",
      *              album : "21st Century",
+     *          },
+     *          {
+     *              id: "456def",
+     *              title: "Boulevard of Broken Dreams",
+     *              artist : "Green Day",
+     *              album : "American Idiot",
      *          }
      *      ]
      *  }
-     *
      */
     var f = {
         group: [],
@@ -62,6 +91,7 @@ exports.index = function(req, res) {
         lookup: {},
         files: []
     };
+
     var group = req.query.group;
     var sort = req.query.sort;
 
@@ -107,26 +137,40 @@ exports.index = function(req, res) {
             // Build the index. Brute force update each group
             // info for each file
             for (var i=0; i<f.files.length; i++) {
-                for (var j=0; j<group.length; j++) {
+                for (var j=0; j<f.group.length; j++) {
                     var key = f.files[i][group[j]];
 
                     if ( key ) {
                         // Group does not exist in index.
                         // Add the basic [[i,i]] entry
                         if (f.index[group[j]][key] == null) {
-                            f.index[group[j]][key] = [[i,i]];
+                            f.index[group[j]][key] = {f: [[i,i]]};
                         } else {
-                            var last = f.index[group[j]][key].pop();
+                            var last = f.index[group[j]][key].f.pop();
                             // This file is adjacent to the current group entry
                             // Modify it from [[x,y], [x,i]]
                             if ((last[1]+1) == i) {
                                 last[1]++;
-                                f.index[group[j]][key].push(last);
+                                f.index[group[j]][key].f.push(last);
                             // This file is *not* adjacent. Add a new
                             // [i,i] entry giving: [[a,a], [b,b], ... ,[i,i]]
                             } else {
-                                f.index[group[j]][key].push(last);
-                                f.index[group[j]][key].push([i,i]);
+                                f.index[group[j]][key].f.push(last);
+                                f.index[group[j]][key].f.push([i,i]);
+                            }
+                        }
+                        // Add all other group info (except the current one)
+                        for (var k=0; k<f.group.length; k++) {
+                            if (k != j) {
+                                var g = f.files[i][group[k]];
+                                if ( g ) {
+                                    if (f.index[group[j]][key][group[k]] == null) {
+                                        f.index[group[j]][key][group[k]] = [];
+                                    }
+                                    if (f.index[group[j]][key][group[k]].indexOf(g) == -1) {
+                                        f.index[group[j]][key][group[k]].push(g);
+                                    }
+                                }
                             }
                         }
                     }
