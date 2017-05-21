@@ -5,14 +5,14 @@
  * @author ojourmel
  */
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    config = require('../config.js'),
-    path = require('path'),
-    fs = require('fs'),
-    id3 = require('musicmetadata');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const config = require('../config.js');
+const path = require('path');
+const fs = require('fs');
+const id3 = require('musicmetadata');
 
-var fileSchema = new Schema({
+const fileSchema = new Schema({
     library: {type: String },
     name: {type: String },
     mimetype: {type: String },
@@ -44,7 +44,7 @@ var fileSchema = new Schema({
 fileSchema.statics.parseJSON = function(libkey, body, f) {
 
     if (config.library.hasOwnProperty(libkey)) {
-        var lm = config.library[libkey].libmime;
+        const lm = config.library[libkey].libmime;
         if (lm || lm == '') {
             if (!f) {
                 f = new this();
@@ -66,19 +66,19 @@ fileSchema.statics.parseJSON = function(libkey, body, f) {
                 f.length = body.length;
 
             } else if (lm == 'video') {
-
+                // not implemented
             } else if (lm == 'photo') {
-
+                // not implemented
             } else if (lm == '') {
-
+                // not implemented
             }
         } else {
-            throw new Error("Invalid config format: " + config.toObject);
+            throw new Error('Invalid config format: ' + config.toObject);
         }
     }
 
     return f;
-}
+};
 
 
 
@@ -134,22 +134,22 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
 
     if (config.library.hasOwnProperty(libkey)) {
 
-        var f = new this();
+        let f = new this();
 
         f.library = libkey;
         f.name = n;
         f.path = p;
         f.mimetype = m;
 
-        var lm = config.library[libkey].libmime;
+        const lm = config.library[libkey].libmime;
 
         if (lm == 'audio') {
 
-            var stream = fs.createReadStream(path.join(config.LIBRARY_ROOT, p));
+            const stream = fs.createReadStream(path.join(config.LIBRARY_ROOT, p));
             // Join the Docker container's LIBRARY_ROOT with the real fs file path
             id3(stream, {autoClose: true}, function (err, tags) {
                 if (err) {
-                    console.log("Metadata parse failed on file: " + p);
+                    console.log('Metadata parse failed on file: ' + p);
                     callback(null);
                     return;
                 }
@@ -180,7 +180,7 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
                 // Parse "2/16" and "2" into "02" format
                 if (f.track) {
                     // Grab the first number
-                    f.track = f.track.match(/\d+/)[0]
+                    f.track = f.track.match(/\d+/)[0];
                     // Pad zero or one '0'
                     f.track = ('0'+f.track).substring(f.track.length-1);
                 }
@@ -200,6 +200,6 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
     } else {
         callback(null);
     }
-}
+};
 
 module.exports = mongoose.model('file',fileSchema);

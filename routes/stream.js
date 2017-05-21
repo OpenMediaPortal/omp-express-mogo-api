@@ -7,10 +7,10 @@
  * @author ojourmel
  */
 
-var file = require('../dao/file'),
-    config = require('../config'),
-    fs = require('fs'),
-    path = require('path');
+const file = require('../dao/file');
+const config = require('../config');
+const fs = require('fs');
+const path = require('path');
 
 
 /**
@@ -22,8 +22,8 @@ exports.show = function(req, res) {
         if (err || !f) {
             res.status(404).send({'error':'Not Found'});
         } else {
-            var filepath = path.join(config.LIBRARY_ROOT, f.path);
-            var readStream = fs.createReadStream(filepath);
+            const filepath = path.join(config.LIBRARY_ROOT, f.path);
+            const readStream = fs.createReadStream(filepath);
 
             readStream.on('open', function () {
                 res.set({'Content-Type': f.mimetype});
@@ -36,4 +36,4 @@ exports.show = function(req, res) {
             });
         }
     });
-}
+};

@@ -6,8 +6,8 @@
 * @author ojourmel
 */
 
-var request = require('supertest'),
-    jsonCompare = require('./jsonCompare');
+let request = require('supertest');
+const jsonCompare = require('./jsonCompare');
 
 /*
  * Use local application for code coverage. Note that
@@ -24,39 +24,39 @@ if ('coverage' == process.env.NODE_ENV) {
 }
 
 // populate the database with a few items:
-var music = {
-    name: "TestName",
-    title: "TestTitle",
-    year: "0000",
-    artist: "TestArtist",
-    album: "TestAlbum",
-    mimetype: "TestMimeType",
-    path: "TestPath"
+const music = {
+    name: 'TestName',
+    title: 'TestTitle',
+    year: '0000',
+    artist: 'TestArtist',
+    album: 'TestAlbum',
+    mimetype: 'TestMimeType',
+    path: 'TestPath'
 };
 
-var extra = {
-    name: "ExtraName",
-    title: "ExtraTitle",
-    year: "9999",
-    artist: "ExtraArtist",
-    album: "ExtraAlbum",
-    mimetype: "ExtraMimeType",
-    path: "ExtraPath",
-    extra: "Extra"
+const extra = {
+    name: 'ExtraName',
+    title: 'ExtraTitle',
+    year: '9999',
+    artist: 'ExtraArtist',
+    album: 'ExtraAlbum',
+    mimetype: 'ExtraMimeType',
+    path: 'ExtraPath',
+    extra: 'Extra'
 
 };
 
-var emptyResp = {
-    group: ["name"],
-    index: { "name": {} },
+const emptyResp = {
+    group: ['name'],
+    index: { 'name': {} },
     lookup: {},
     files: []
 };
 
-var groupsort = {
-    group: ["g1", "g2"],
-    index: { "g1": {},
-             "g2": {} },
+const groupsort = {
+    group: ['g1', 'g2'],
+    index: { 'g1': {},
+        'g2': {} },
     lookup: {},
     files: []
 };
@@ -101,7 +101,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(201)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.name , music.name) ||
+                const r = jsonCompare.property(res.body.name , music.name) ||
                        jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
@@ -132,7 +132,7 @@ describe('file (/library/:libkey) api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
-                var r = jsonCompare.property(res.body.name , extra.name) ||
+                const r = jsonCompare.property(res.body.name , extra.name) ||
                        jsonCompare.property(res.body.title , extra.title) ||
                        jsonCompare.property(res.body.year , extra.year) ||
                        jsonCompare.property(res.body.artist , extra.artist) ||
@@ -157,10 +157,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty path /library/music post', function (done) {
-        var tmp = {
+        const tmp = {
             name: 'empty.exe',
             mimetype: 'exe'
-        }
+        };
 
         request
             .post('/library/music')
@@ -170,10 +170,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty name /library/music post', function (done) {
-        var tmp = {
+        const tmp = {
             mimetype: 'exe',
             path: '/path/'
-        }
+        };
         request
             .post('/library/music')
             .set('Content-Type', 'application/json')
@@ -182,10 +182,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty mimetype /library/music post', function (done) {
-        var tmp = {
+        const tmp = {
             name: 'name',
             path: '/path/'
-        }
+        };
         request
             .post('/library/music')
             .set('Content-Type', 'application/json')
@@ -194,10 +194,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty path /library/music put', function (done) {
-        var tmp = {
+        const tmp = {
             name: 'empty',
             mimetype: 'exe'
-        }
+        };
 
         request
             .put('/library/music/' + music._id)
@@ -207,10 +207,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty name /library/music put', function (done) {
-        var tmp = {
+        const tmp = {
             mimetype: 'exe',
             path: '/path/'
-        }
+        };
         request
             .put('/library/music/' + music._id)
             .set('Content-Type', 'application/json')
@@ -219,10 +219,10 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should 400 empty mimetype /library/music put', function (done) {
-        var tmp = {
+        const tmp = {
             name: 'name',
             path: '/path/'
-        }
+        };
         request
             .put('/library/music/' + music._id)
             .set('Content-Type', 'application/json')
@@ -255,7 +255,7 @@ describe('file (/library/:libkey) api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
-                var r = jsonCompare.property(res.body.name , music.name) ||
+                const r = jsonCompare.property(res.body.name , music.name) ||
                        jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
@@ -299,7 +299,7 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should respond to /library/music/:id put ', function (done) {
-        music.year = "2222";
+        music.year = '2222';
         delete music.artist;
 
         request
@@ -309,7 +309,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.name , music.name) ||
+                const r = jsonCompare.property(res.body.name , music.name) ||
                        jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||
@@ -336,7 +336,7 @@ describe('file (/library/:libkey) api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.name , music.name) ||
+                const r = jsonCompare.property(res.body.name , music.name) ||
                        jsonCompare.property(res.body.title , music.title) ||
                        jsonCompare.property(res.body.year , music.year) ||
                        jsonCompare.property(res.body.artist , music.artist) ||

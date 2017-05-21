@@ -24,6 +24,12 @@
   },
   "devDependencies": {
     "blanket": "^1.2.3",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
     "mocha": "^3.2.0",
     "mocha-multi": "^0.9.1",
     "supertest": "^2.0.1"
@@ -32,7 +38,8 @@
     "start": "pm2-docker start ecosystem.config.js --env production",
     "watch": "pm2-docker start ecosystem.config.js",
     "test": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_LIBRARY_ROOT=$(pwd) NODE_ENV=development ./node_modules/mocha/bin/mocha",
-    "coverage": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_MONGO_HOST=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps | grep ompexpressmongoapi_omp-mongo | awk  '{print $1}')) OMP_LIBRARY_ROOT=$(pwd) OMP_API_PORT=8002 NODE_ENV=coverage multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha --require blanket --reporter mocha-multi"
+    "coverage": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_MONGO_HOST=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $(docker ps | grep ompexpressmongoapi_omp-mongo | awk  '{print $1}')) OMP_LIBRARY_ROOT=$(pwd) OMP_API_PORT=8002 NODE_ENV=coverage multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha --require blanket --reporter mocha-multi",
+    "lint": "OMP_CONFIG_PATH=./.travis-omp-config.yml OMP_LIBRARY_ROOT=$(pwd) NODE_ENV=development ./node_modules/eslint/bin/eslint.js ./config.js ./server.js ./dao/**/*.js ./routes/**/*.js ./test/**/*.js"
   },
   "config": {
     "blanket": {

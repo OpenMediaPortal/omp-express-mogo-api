@@ -9,13 +9,12 @@
  * @author ojourmel
  */
 
-var file = require('../dao/file'),
-    sync = require('../dao/sync'),
-    config = require('../config'),
-    fs = require('fs'),
-    path = require('path'),
-    mime = require('mime-types'),
-    walk = require('walk');
+const file = require('../dao/file');
+const sync = require('../dao/sync');
+const config = require('../config');
+const path = require('path');
+const mime = require('mime-types');
+const walk = require('walk');
 
 
 /**
@@ -31,7 +30,7 @@ exports.index = function(req, res) {
             res.send(s);
         }
     });
-}
+};
 
 /**
  * get /sync/:libkey
@@ -39,7 +38,7 @@ exports.index = function(req, res) {
  * @example /sync/music
  */
 exports.show = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)){
         return res.status(404).send({'error':'Not Found'});
     }
@@ -63,7 +62,7 @@ exports.show = function(req, res) {
             res.send(s);
         }
     });
-}
+};
 
 /**
  * put /sync/:libkey
@@ -74,7 +73,7 @@ exports.show = function(req, res) {
  * @TODO: Move walking into a separate function to avoid anonymous functions
  */
 exports.update = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)){
         return res.status(404).send({'error':'Not Found'});
     }
@@ -120,27 +119,27 @@ exports.update = function(req, res) {
                     s.save();
                 }
 
-                var l = config.library[libkey].libpath.length;
-                for (var i=0; i < l; i++){
+                const l = config.library[libkey].libpath.length;
+                for (let i=0; i < l; i++){
                     (function(libroot) {
-                        var walker = walk.walk(path.join(config.LIBRARY_ROOT ,libroot).toString());
-                        walker.on("file", function (root, stats, next) {
-                            var n = stats.name;
-                            var m = mime.lookup(stats.name).toString();
-                            var p = "/" + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
+                        const walker = walk.walk(path.join(config.LIBRARY_ROOT ,libroot).toString());
+                        walker.on('file', function (root, stats, next) {
+                            const n = stats.name;
+                            const m = mime.lookup(stats.name).toString();
+                            const p = '/' + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
 
                             if (m.match(config.library[libkey].libmime)) {
                                 file.parsePath(libkey, n, p, m, function(f) {
                                     if (f) {
                                         f.save(function (err) {
                                             if (err) {
-                                                console.log("Error: " + err);
+                                                console.log('Error: ' + err);
                                             }
                                             s.status.totalFiles++;
                                             s.status.syncTime = Date.now() - s.lastSynced;
                                             s.save(function (err) {
                                                 if (err) {
-                                                    console.log("Error: " + err);
+                                                    console.log('Error: ' + err);
                                                 }
                                                 next();
                                             });
@@ -155,10 +154,10 @@ exports.update = function(req, res) {
                                 next();
                             }
                         });
-                        walker.on("errors", function (root, stat, next) {
+                        walker.on('errors', function (root, stat, next) {
                             next();
                         });
-                        walker.on("end", function () {
+                        walker.on('end', function () {
                             s.status.syncing = false;
                             s.status.syncTime = Date.now() - s.lastSynced;
                             s.save();
@@ -169,7 +168,7 @@ exports.update = function(req, res) {
             });
         });
     });
-}
+};
 
 /**
  * delete /sync/
@@ -189,16 +188,16 @@ exports.destroyAll = function(req, res) {
             res.status(204).send();
         });
     });
-}
+};
 
 /**
  * delete /sync/:libkey
  *
  */
 exports.destroy = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)){
-        sync.remove({library: libkey}, function(err) {
+        sync.remove({library: libkey}, function() {
             return res.status(404).send({'error':'Not Found'});
         });
     } else {
@@ -216,4 +215,4 @@ exports.destroy = function(req, res) {
             });
         });
     }
-}
+};

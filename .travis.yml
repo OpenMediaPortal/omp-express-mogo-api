@@ -23,7 +23,8 @@ before_script:
 script:
     - docker ps | grep omp-express-mongo-api
     - docker ps | grep omp-mongo
-    - npm test
+    - npm run lint
+    - npm run test
 
 after_script:
     - docker-compose -f .travis.docker-compose.yml stop

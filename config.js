@@ -8,10 +8,10 @@
  * @author ojourmel
  */
 
-var fs = require('fs'),
-    yaml = require('js-yaml');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
-var config = {};
+let config = {};
 
 // A few constants can be set by the environment
 config.CONFIG_PATH = process.env.OMP_CONFIG_PATH || './omp-config.yml';
@@ -24,25 +24,25 @@ config.raw = {};
 config.api_port = process.env.OMP_API_PORT || 8001;
 config.library = {};
 config.library.music =  {
-                            libmime: 'audio',
-                            libpath: []
-                        };
+    libmime: 'audio',
+    libpath: []
+};
 config.library.photos = {
-                            libmime: 'image',
-                            libpath: []
-                        };
+    libmime: 'image',
+    libpath: []
+};
 config.library.tv =     {
-                            libmime: 'video',
-                            libpath: []
-                        };
+    libmime: 'video',
+    libpath: []
+};
 config.library.movies = {
-                            libmime: 'video',
-                            libpath: []
-                        };
+    libmime: 'video',
+    libpath: []
+};
 config.library.other =  {
-                            libmime: '',
-                            libpath: []
-                        };
+    libmime: '',
+    libpath: []
+};
 
 // Throw an exception on bad config path
 config.load = function() {
@@ -50,7 +50,7 @@ config.load = function() {
         this.raw = yaml.safeLoad(fs.readFileSync(this.CONFIG_PATH));
 
         // Sanitize config input
-        for (var l in this.raw.library) {
+        for (let l in this.raw.library) {
             if ((! this.raw.library[l].hasOwnProperty('libmime')) ||
                 (! this.raw.library[l].hasOwnProperty('libpath')) ||
                 (! (this.raw.library[l].libpath instanceof Array))) {
@@ -68,12 +68,12 @@ config.load = function() {
         // Missing config file - write the defaults.
         config.save();
     }
-}
+};
 
 config.save = function() {
     this.raw.library = this.library;
     fs.writeFileSync(this.CONFIG_PATH, yaml.safeDump(this.raw, {indent: 4}));
-}
+};
 
 /*
  * Set constants.

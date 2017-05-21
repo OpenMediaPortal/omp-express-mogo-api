@@ -8,12 +8,12 @@
  *
  */
 
-var file = require('../dao/file'),
-    sync = require('../dao/sync'),
-    config = require('../config');
+const file = require('../dao/file');
+const sync = require('../dao/sync');
+const config = require('../config');
 
 
-var typeJson = new RegExp('^application/json');
+const typeJson = new RegExp('^application/json');
 
 /**
  * get /library
@@ -22,7 +22,7 @@ var typeJson = new RegExp('^application/json');
 exports.index = function(req, res) {
     config.load();
     res.send(config.library);
-}
+};
 
 /**
  * post /library
@@ -36,8 +36,8 @@ exports.create = function(req, res) {
     }
     config.library = {};
 
-    var lib = req.body;
-    for (var prop in lib) {
+    const lib = req.body;
+    for (const prop in lib) {
         if ((!lib[prop].hasOwnProperty('libmime')) ||
             (lib[prop].libmime == null) ||
             (!lib[prop].hasOwnProperty('libpath')) ||
@@ -49,7 +49,7 @@ exports.create = function(req, res) {
     }
     config.save();
     res.send(config.library);
-}
+};
 
 /**
  * put /library/:libkey
@@ -57,13 +57,13 @@ exports.create = function(req, res) {
  * Replace the libkey
  */
 exports.update = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
 
     if (! typeJson.test(req.get('Content-Type'))) {
         return res.status(415).send({'error':'Unsupported Media Type'});
     }
 
-    var prop = req.body;
+    const prop = req.body;
     if ((!prop.hasOwnProperty('libmime')) ||
         (prop.libmime == null) ||
         (!prop.hasOwnProperty('libpath')) ||
@@ -74,24 +74,24 @@ exports.update = function(req, res) {
     config.library[libkey] = prop;
     config.save();
     res.send(config.library[libkey]);
-}
+};
 
 /**
  * delete /library/:libkey
  *
  */
 exports.destroy = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
 
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
 
-    file.remove({library: libkey}, function(err) {
-        sync.remove({library: libkey}, function(err) {
+    file.remove({library: libkey}, function() {
+        sync.remove({library: libkey}, function() {
             delete config.library[libkey];
             config.save();
             res.status(204).send();
         });
     });
-}
+};

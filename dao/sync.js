@@ -5,11 +5,11 @@
  * @author ojourmel
  */
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    config = require('../config');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const config = require('../config');
 
-var syncSchema = new Schema({
+const syncSchema = new Schema({
     status: {
         syncing: {type: Boolean },
         syncTime: {type: Number },
@@ -25,15 +25,15 @@ syncSchema.statics.init = function(libkey, s) {
             s = new this();
         }
         s.status = {
-                    syncing: false,
-                    syncTime: 0,
-                    totalFiles: 0
-                    };
+            syncing: false,
+            syncTime: 0,
+            totalFiles: 0
+        };
         s.library = libkey;
         s.lastSynced = null;
     }
 
     return s;
-}
+};
 
 module.exports = mongoose.model('sync',syncSchema);
