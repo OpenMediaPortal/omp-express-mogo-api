@@ -73,12 +73,12 @@ fileSchema.statics.parseJSON = function(libkey, body, f) {
 
             }
         } else {
-            throw new Error("Invalid config format: " + config.toObject);
+            throw new Error('Invalid config format: ' + config.toObject);
         }
     }
 
     return f;
-}
+};
 
 
 
@@ -149,7 +149,7 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
             // Join the Docker container's LIBRARY_ROOT with the real fs file path
             id3(stream, {autoClose: true}, function (err, tags) {
                 if (err) {
-                    console.log("Metadata parse failed on file: " + p);
+                    console.log('Metadata parse failed on file: ' + p);
                     callback(null);
                     return;
                 }
@@ -180,7 +180,7 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
                 // Parse "2/16" and "2" into "02" format
                 if (f.track) {
                     // Grab the first number
-                    f.track = f.track.match(/\d+/)[0]
+                    f.track = f.track.match(/\d+/)[0];
                     // Pad zero or one '0'
                     f.track = ('0'+f.track).substring(f.track.length-1);
                 }
@@ -200,6 +200,6 @@ fileSchema.statics.parsePath = function(libkey, n, p, m, callback) {
     } else {
         callback(null);
     }
-}
+};
 
 module.exports = mongoose.model('file',fileSchema);

@@ -71,28 +71,28 @@ exports.index = function(req, res) {
     // Sort flat results by group first
     // use 'truthy' check for group and sort
     if ( group ) {
-        group = group.split(",");
+        group = group.split(',');
 
         for (var i=0; i<group.length; i++) {
             gs[group[i]] = 1;
             f.index[group[i]] = {};
         }
     } else {
-        group = ["name"];
+        group = ['name'];
         f.index[group[0]] = {};
     }
 
     // add sorting (alphabetical, etc) after
     // applied within each subgroup of the grouping
     if ( sort ) {
-        sort = sort.split(",");
+        sort = sort.split(',');
         for (var i=0; i<sort.length; i++) {
             // Support only alphabetical A-Z for now
             // Use -1 for Z-A
             gs[sort[i]] = 1;
         }
     } else {
-        sort = ["name"];
+        sort = ['name'];
     }
 
     // execute query
@@ -136,7 +136,7 @@ exports.index = function(req, res) {
             res.send(f);
         }
     });
-}
+};
 
 /**
  * get /library/:libkey/:id
@@ -178,11 +178,11 @@ exports.create = function(req, res) {
                                      {'error':err}]);
             }
             var loc = url.format(
-                        {
-                            protocol: req.protocol,
-                            host: req.get('host'),
-                            pathname: req.originalUrl
-                        });
+                {
+                    protocol: req.protocol,
+                    host: req.get('host'),
+                    pathname: req.originalUrl
+                });
             loc += (loc.charAt(loc.length-1) == '/') ? f._id : '/' + f._id;
             res.location(loc);
             res.status(201).send(f.toObject());
@@ -190,7 +190,7 @@ exports.create = function(req, res) {
     } else {
         res.status(400).send({'error':'Bad Format', 'body':f});
     }
-}
+};
 
 /**
  * put /library/:libkey/:id
@@ -226,7 +226,7 @@ exports.update = function(req, res) {
             }
         }
     });
-}
+};
 
 /**
  * delete /library/:libkey/:id
@@ -246,4 +246,4 @@ exports.destroy = function(req, res) {
             res.status(204).send();
         }
     });
-}
+};

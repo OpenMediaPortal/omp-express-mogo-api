@@ -22,7 +22,7 @@ var typeJson = new RegExp('^application/json');
 exports.index = function(req, res) {
     config.load();
     res.send(config.library);
-}
+};
 
 /**
  * post /library
@@ -49,7 +49,7 @@ exports.create = function(req, res) {
     }
     config.save();
     res.send(config.library);
-}
+};
 
 /**
  * put /library/:libkey
@@ -74,7 +74,7 @@ exports.update = function(req, res) {
     config.library[libkey] = prop;
     config.save();
     res.send(config.library[libkey]);
-}
+};
 
 /**
  * delete /library/:libkey
@@ -94,4 +94,4 @@ exports.destroy = function(req, res) {
             res.status(204).send();
         });
     });
-}
+};

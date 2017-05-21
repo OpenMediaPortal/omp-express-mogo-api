@@ -24,25 +24,25 @@ config.raw = {};
 config.api_port = process.env.OMP_API_PORT || 8001;
 config.library = {};
 config.library.music =  {
-                            libmime: 'audio',
-                            libpath: []
-                        };
+    libmime: 'audio',
+    libpath: []
+};
 config.library.photos = {
-                            libmime: 'image',
-                            libpath: []
-                        };
+    libmime: 'image',
+    libpath: []
+};
 config.library.tv =     {
-                            libmime: 'video',
-                            libpath: []
-                        };
+    libmime: 'video',
+    libpath: []
+};
 config.library.movies = {
-                            libmime: 'video',
-                            libpath: []
-                        };
+    libmime: 'video',
+    libpath: []
+};
 config.library.other =  {
-                            libmime: '',
-                            libpath: []
-                        };
+    libmime: '',
+    libpath: []
+};
 
 // Throw an exception on bad config path
 config.load = function() {
@@ -68,12 +68,12 @@ config.load = function() {
         // Missing config file - write the defaults.
         config.save();
     }
-}
+};
 
 config.save = function() {
     this.raw.library = this.library;
     fs.writeFileSync(this.CONFIG_PATH, yaml.safeDump(this.raw, {indent: 4}));
-}
+};
 
 /*
  * Set constants.

@@ -42,7 +42,7 @@ var lib = {
         libmime: '',
         libpath: ['o1','o2']
     }
-}
+};
 
 
 // stubbed version of the server's config object
@@ -66,10 +66,10 @@ var config = {
         },
         other: {
             libmime: 'application/javascript',
-            libpath: ["/routes"]
+            libpath: ['/routes']
         }
     }
-}
+};
 
 describe('library api', function () {
     it('should respond to the default /library get', function (done) {
@@ -171,7 +171,7 @@ describe('library api', function () {
     });
 
     it('should reject non array libpath in /library post', function (done) {
-        lib.tv = {libmime: '', libpath: "/path" };
+        lib.tv = {libmime: '', libpath: '/path' };
         request
             .post('/library')
             .set('Content-Type', 'application/json')
@@ -217,7 +217,7 @@ describe('library api', function () {
     });
 
     it('should reject non array libpath in /library put', function (done) {
-        lib.tv = {libmime: '', libpath: "/path" };
+        lib.tv = {libmime: '', libpath: '/path' };
         request
             .put('/library/tv')
             .set('Content-Type', 'application/json')

@@ -6,7 +6,7 @@
 
 var request = require('supertest'),
     jsonCompare = require('./jsonCompare'),
-    config = require('../config')
+    config = require('../config'),
     fs = require('fs');
 
 var sync = require('../dao/sync');

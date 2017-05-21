@@ -55,7 +55,7 @@ describe('sync api', function () {
                        jsonCompare.property(res.body.library , s.library);
 
                 if(!r && res.body.lastSynced != null) {
-                    r = "Error: res.body.lastSynced = " + res.body.lastSynced;
+                    r = 'Error: res.body.lastSynced = ' + res.body.lastSynced;
                 }
 
                 if (r) {
@@ -83,7 +83,7 @@ describe('sync api', function () {
                        jsonCompare.property(res.body.library , s.library);
 
                 if(!r && res.body.lastSynced != null) {
-                    r = "Error: res.body.lastSynced = " + res.body.lastSynced;
+                    r = 'Error: res.body.lastSynced = ' + res.body.lastSynced;
                 }
 
                 if (r) {
@@ -124,11 +124,11 @@ describe('sync api', function () {
 
                 if(!r) {
                     if (res.body.lastSynced == null) {
-                        r = "Error: res.body.lastSynced is null";
+                        r = 'Error: res.body.lastSynced is null';
                     } else if (res.body.lastSynced <= lastSynced) {
-                        r = "Error: invalid lastSynced date: " + res.body.lastSynced;
+                        r = 'Error: invalid lastSynced date: ' + res.body.lastSynced;
                     } else if (res.body.status.syncTime >= 500) {
-                        r = "Error: unusually large sync time for nothing done: " + res.body.status.syncTime;
+                        r = 'Error: unusually large sync time for nothing done: ' + res.body.status.syncTime;
                     }
                 }
 
@@ -160,9 +160,9 @@ describe('sync api', function () {
 
                 if(!r) {
                     if (res.body.lastSynced == null) {
-                        r = "Error: res.body.lastSynced is null";
+                        r = 'Error: res.body.lastSynced is null';
                     } else if (res.body.lastSynced <= s.lastSynced) {
-                        r = "Error: invalid lastSynced date: " + res.body.lastSynced;
+                        r = 'Error: invalid lastSynced date: ' + res.body.lastSynced;
                     }
                 }
 
@@ -183,9 +183,9 @@ describe('sync api', function () {
 
         // Allow this test to be retried while we wait for the endpoint to finish the sync.
         this.retries(6);
-        this.timeout(1000)
+        this.timeout(1000);
         // Force a CPU block to wait. Kindof hacky, but for the sake of testing...
-        var end = new Date().getTime() + 500
+        var end = new Date().getTime() + 500;
         while(new Date().getTime() < end);
 
         request
@@ -201,13 +201,13 @@ describe('sync api', function () {
 
                     // We cannot test for real files being walked as the walk object is not stubbed
                     if (res.body.lastSynced == null) {
-                        r = "Error: res.body.lastSynced is null";
+                        r = 'Error: res.body.lastSynced is null';
                     } else if (res.body.lastSynced <= s.lastSynced){
-                        r = "Error: invalid lastSynced date: " + res.body.lastSynced;
+                        r = 'Error: invalid lastSynced date: ' + res.body.lastSynced;
                     } else if (res.body.status.syncTime == 0){
-                        r = "Error: no time spent syncing";
+                        r = 'Error: no time spent syncing';
                     } else if (res.body.status.totalFiles == 0){
-                        r = "Error: no files found";
+                        r = 'Error: no files found';
                     }
                 }
 

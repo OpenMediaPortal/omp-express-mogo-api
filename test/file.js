@@ -25,38 +25,38 @@ if ('coverage' == process.env.NODE_ENV) {
 
 // populate the database with a few items:
 var music = {
-    name: "TestName",
-    title: "TestTitle",
-    year: "0000",
-    artist: "TestArtist",
-    album: "TestAlbum",
-    mimetype: "TestMimeType",
-    path: "TestPath"
+    name: 'TestName',
+    title: 'TestTitle',
+    year: '0000',
+    artist: 'TestArtist',
+    album: 'TestAlbum',
+    mimetype: 'TestMimeType',
+    path: 'TestPath'
 };
 
 var extra = {
-    name: "ExtraName",
-    title: "ExtraTitle",
-    year: "9999",
-    artist: "ExtraArtist",
-    album: "ExtraAlbum",
-    mimetype: "ExtraMimeType",
-    path: "ExtraPath",
-    extra: "Extra"
+    name: 'ExtraName',
+    title: 'ExtraTitle',
+    year: '9999',
+    artist: 'ExtraArtist',
+    album: 'ExtraAlbum',
+    mimetype: 'ExtraMimeType',
+    path: 'ExtraPath',
+    extra: 'Extra'
 
 };
 
 var emptyResp = {
-    group: ["name"],
-    index: { "name": {} },
+    group: ['name'],
+    index: { 'name': {} },
     lookup: {},
     files: []
 };
 
 var groupsort = {
-    group: ["g1", "g2"],
-    index: { "g1": {},
-             "g2": {} },
+    group: ['g1', 'g2'],
+    index: { 'g1': {},
+        'g2': {} },
     lookup: {},
     files: []
 };
@@ -160,7 +160,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             name: 'empty.exe',
             mimetype: 'exe'
-        }
+        };
 
         request
             .post('/library/music')
@@ -173,7 +173,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             mimetype: 'exe',
             path: '/path/'
-        }
+        };
         request
             .post('/library/music')
             .set('Content-Type', 'application/json')
@@ -185,7 +185,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             name: 'name',
             path: '/path/'
-        }
+        };
         request
             .post('/library/music')
             .set('Content-Type', 'application/json')
@@ -197,7 +197,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             name: 'empty',
             mimetype: 'exe'
-        }
+        };
 
         request
             .put('/library/music/' + music._id)
@@ -210,7 +210,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             mimetype: 'exe',
             path: '/path/'
-        }
+        };
         request
             .put('/library/music/' + music._id)
             .set('Content-Type', 'application/json')
@@ -222,7 +222,7 @@ describe('file (/library/:libkey) api', function () {
         var tmp = {
             name: 'name',
             path: '/path/'
-        }
+        };
         request
             .put('/library/music/' + music._id)
             .set('Content-Type', 'application/json')
@@ -299,7 +299,7 @@ describe('file (/library/:libkey) api', function () {
     });
 
     it('should respond to /library/music/:id put ', function (done) {
-        music.year = "2222";
+        music.year = '2222';
         delete music.artist;
 
         request

@@ -25,15 +25,15 @@ syncSchema.statics.init = function(libkey, s) {
             s = new this();
         }
         s.status = {
-                    syncing: false,
-                    syncTime: 0,
-                    totalFiles: 0
-                    };
+            syncing: false,
+            syncTime: 0,
+            totalFiles: 0
+        };
         s.library = libkey;
         s.lastSynced = null;
     }
 
     return s;
-}
+};
 
 module.exports = mongoose.model('sync',syncSchema);

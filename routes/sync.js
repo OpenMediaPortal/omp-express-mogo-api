@@ -31,7 +31,7 @@ exports.index = function(req, res) {
             res.send(s);
         }
     });
-}
+};
 
 /**
  * get /sync/:libkey
@@ -63,7 +63,7 @@ exports.show = function(req, res) {
             res.send(s);
         }
     });
-}
+};
 
 /**
  * put /sync/:libkey
@@ -124,23 +124,23 @@ exports.update = function(req, res) {
                 for (var i=0; i < l; i++){
                     (function(libroot) {
                         var walker = walk.walk(path.join(config.LIBRARY_ROOT ,libroot).toString());
-                        walker.on("file", function (root, stats, next) {
+                        walker.on('file', function (root, stats, next) {
                             var n = stats.name;
                             var m = mime.lookup(stats.name).toString();
-                            var p = "/" + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
+                            var p = '/' + path.join(root, stats.name).toString().substr(config.LIBRARY_ROOT.length);
 
                             if (m.match(config.library[libkey].libmime)) {
                                 file.parsePath(libkey, n, p, m, function(f) {
                                     if (f) {
                                         f.save(function (err) {
                                             if (err) {
-                                                console.log("Error: " + err);
+                                                console.log('Error: ' + err);
                                             }
                                             s.status.totalFiles++;
                                             s.status.syncTime = Date.now() - s.lastSynced;
                                             s.save(function (err) {
                                                 if (err) {
-                                                    console.log("Error: " + err);
+                                                    console.log('Error: ' + err);
                                                 }
                                                 next();
                                             });
@@ -155,10 +155,10 @@ exports.update = function(req, res) {
                                 next();
                             }
                         });
-                        walker.on("errors", function (root, stat, next) {
+                        walker.on('errors', function (root, stat, next) {
                             next();
                         });
-                        walker.on("end", function () {
+                        walker.on('end', function () {
                             s.status.syncing = false;
                             s.status.syncTime = Date.now() - s.lastSynced;
                             s.save();
@@ -169,7 +169,7 @@ exports.update = function(req, res) {
             });
         });
     });
-}
+};
 
 /**
  * delete /sync/
@@ -189,7 +189,7 @@ exports.destroyAll = function(req, res) {
             res.status(204).send();
         });
     });
-}
+};
 
 /**
  * delete /sync/:libkey
@@ -216,4 +216,4 @@ exports.destroy = function(req, res) {
             });
         });
     }
-}
+};

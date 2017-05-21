@@ -16,13 +16,13 @@ if ('coverage' == process.env.NODE_ENV) {
 // Use the README.md file for testing purposes
 // This file is mounted in .travis-docker-compose.yml
 var file = {
-    name: "README.md",
-    mimetype: "text/plain"
+    name: 'README.md',
+    mimetype: 'text/plain'
 };
 
 // Use a relative path regardelss if running in docker or locally.
 // Use OMP_LIBRARY_ROOT to change file location
-file.path = "./README.md";
+file.path = './README.md';
 
 describe('stream api', function () {
 
