@@ -5,7 +5,7 @@
 * @author ojourmel
 */
 
-var request = require('supertest');
+let request = require('supertest');
 
 if ('coverage' == process.env.NODE_ENV) {
     request = request(require('../server'));
@@ -15,7 +15,7 @@ if ('coverage' == process.env.NODE_ENV) {
 
 // Use the README.md file for testing purposes
 // This file is mounted in .travis-docker-compose.yml
-var file = {
+const file = {
     name: 'README.md',
     mimetype: 'text/plain'
 };
@@ -48,15 +48,15 @@ describe('stream api', function () {
                     .get('/stream/' + file._id)
                     .expect(200)
                     .expect('Content-Type', new RegExp('^' + file.mimetype + '.*'))
-                    .end(function (err, res) {
+                    .end(function () {
 
                         // Clean up test data, again, dependent on /other/
                         request
                             .delete('/library/other/' + file._id)
                             .end(function (derr, res){
 
-                                if (err) {
-                                    done(err);
+                                if (derr) {
+                                    done(derr);
                                 } else {
                                     done();
                                 }
@@ -80,15 +80,15 @@ describe('stream api', function () {
                 request
                     .get('/stream/' + file._id)
                     .expect(404)
-                    .end(function (err, res) {
+                    .end(function () {
 
                         // Clean up test data, again, dependent on /other/
                         request
                             .delete('/library/other/' + file._id)
                             .end(function (derr, res){
 
-                                if (err) {
-                                    done(err);
+                                if (derr) {
+                                    done(derr);
                                 } else {
                                     done();
                                 }

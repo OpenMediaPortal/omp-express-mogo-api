@@ -4,22 +4,20 @@
 * @author ojourmel
 */
 
-var request = require('supertest'),
-    jsonCompare = require('./jsonCompare'),
-    config = require('../config'),
-    fs = require('fs');
+const jsonCompare = require('./jsonCompare');
+const config = require('../config');
 
-var sync = require('../dao/sync');
+const sync = require('../dao/sync');
 
 describe('sync init', function () {
 
     it('should reject bad libkey', function (done) {
         delete config.library.testlibkey;
 
-        var s = sync.init('testlibkey', null);
+        const s = sync.init('testlibkey', null);
 
         if (s != null) {
-            throw new Error('Error: expected null sync parsed from bad libkey. Got' + f);
+            throw new Error('Error: expected null sync parsed from bad libkey. Got' + s);
         } else {
             done();
         }
@@ -28,7 +26,7 @@ describe('sync init', function () {
     it('should fill in valid basic data given null', function (done) {
         config.library.testlibkey = {libmime: 'test', libpath: []};
 
-        var s = sync.init('testlibkey', null);
+        let s = sync.init('testlibkey', null);
 
         if (!s) {
             throw new Error('Error: null sync');
@@ -36,7 +34,7 @@ describe('sync init', function () {
 
         s = s.toObject();
 
-        var r = jsonCompare.property(s.status.syncing, false) ||
+        const r = jsonCompare.property(s.status.syncing, false) ||
                 jsonCompare.property(s.status.syncTime, '0') ||
                 jsonCompare.property(s.status.totalFiles, '0') ||
                 jsonCompare.property(s.library, 'testlibkey') ||
@@ -53,7 +51,7 @@ describe('sync init', function () {
     it('should overwrite valid basic data given existing', function (done) {
         config.library.testlibkey = {libmime: 'test', libpath: []};
 
-        var s = new sync();
+        let s = new sync();
 
         s.status = { syncing: true, syncTime: -1, totalFiles: -1};
         s.library = 'oldlibrary';
@@ -67,7 +65,7 @@ describe('sync init', function () {
 
         s = s.toObject();
 
-        var r = jsonCompare.property(s.status.syncing, false) ||
+        const r = jsonCompare.property(s.status.syncing, false) ||
                 jsonCompare.property(s.status.syncTime, '0') ||
                 jsonCompare.property(s.status.totalFiles, '0') ||
                 jsonCompare.property(s.library, 'testlibkey') ||

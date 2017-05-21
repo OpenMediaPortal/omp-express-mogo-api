@@ -5,11 +5,11 @@
  * @author ojourmel
  */
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    config = require('../config');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const config = require('../config');
 
-var syncSchema = new Schema({
+const syncSchema = new Schema({
     status: {
         syncing: {type: Boolean },
         syncTime: {type: Number },

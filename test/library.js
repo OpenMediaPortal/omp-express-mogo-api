@@ -6,8 +6,8 @@
 * @author ojourmel
 */
 
-var request = require('supertest'),
-    jsonCompare = require('./jsonCompare');
+let request = require('supertest');
+const jsonCompare = require('./jsonCompare');
 
 /*
  * Use local application for code coverage.
@@ -21,7 +21,7 @@ if ('coverage' == process.env.NODE_ENV) {
 }
 
 // populate the database with a few items:
-var lib = {
+const lib = {
     music: {
         libmime: 'audio',
         libpath: ['a1','a2']
@@ -46,7 +46,7 @@ var lib = {
 
 
 // stubbed version of the server's config object
-var config = {
+const config = {
     library: {
         music: {
             libmime: 'audio',
@@ -78,7 +78,7 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
+                const r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
                         jsonCompare.array(res.body.music.libpath , config.library.music.libpath) ||
                         jsonCompare.property(res.body.photos.libmime , config.library.photos.libmime) ||
                         jsonCompare.array(res.body.photos.libpath , config.library.photos.libpath) ||
@@ -110,7 +110,7 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.music.libmime , lib.music.libmime) ||
+                const r = jsonCompare.property(res.body.music.libmime , lib.music.libmime) ||
                         jsonCompare.array(res.body.music.libpath , lib.music.libpath) ||
                         jsonCompare.property(res.body.photos.libmime , lib.photos.libmime) ||
                         jsonCompare.array(res.body.photos.libpath , lib.photos.libpath) ||
@@ -234,7 +234,7 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.libmime , lib.other.libmime) ||
+                const r = jsonCompare.property(res.body.libmime , lib.other.libmime) ||
                         jsonCompare.array(res.body.libpath , lib.other.libpath);
 
                 if (r) {
@@ -282,7 +282,7 @@ describe('library api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
+                const r = jsonCompare.property(res.body.music.libmime , config.library.music.libmime) ||
                         jsonCompare.array(res.body.music.libpath , config.library.music.libpath) ||
                         jsonCompare.property(res.body.photos.libmime , config.library.photos.libmime) ||
                         jsonCompare.array(res.body.photos.libpath , config.library.photos.libpath) ||

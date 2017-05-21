@@ -6,19 +6,16 @@
 * @author ojourmel
 */
 
-var request = require('supertest'),
-    jsonCompare = require('./jsonCompare');
-
-var config;
+let request = require('supertest');
+const jsonCompare = require('./jsonCompare');
 
 if ('coverage' == process.env.NODE_ENV) {
-    request = request(require('../server')),
-    config = require('../config');
+    request = request(require('../server'));
 } else {
     request = request('http://localhost:8001');
 }
 
-var s = {
+const s = {
     status: {
         syncing: false,
         syncTime: 0,
@@ -49,7 +46,7 @@ describe('sync api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
+                let r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
                        jsonCompare.property(res.body.status.syncTime , s.status.syncTime) ||
                        jsonCompare.property(res.body.status.totalFiles , s.status.totalFiles) ||
                        jsonCompare.property(res.body.library , s.library);
@@ -77,7 +74,7 @@ describe('sync api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
+                let r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
                        jsonCompare.property(res.body.status.syncTime , s.status.syncTime) ||
                        jsonCompare.property(res.body.status.totalFiles , s.status.totalFiles) ||
                        jsonCompare.property(res.body.library , s.library);
@@ -112,13 +109,13 @@ describe('sync api', function () {
     });
 
     it('should start and immediately finish an empty libpath /sync/:libkey put', function (done) {
-        var lastSynced = Date.now();
+        const lastSynced = Date.now();
         request
             .put('/sync/music')
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.status.syncing , false) ||
+                let r = jsonCompare.property(res.body.status.syncing , false) ||
                        jsonCompare.property(res.body.status.totalFiles, 0) ||
                        jsonCompare.property(res.body.library , 'music');
 
@@ -153,7 +150,7 @@ describe('sync api', function () {
             .expect(200)
             .expect('Content-Type', /json/)
             .expect(function(res) {
-                var r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
+                let r = jsonCompare.property(res.body.status.syncing , s.status.syncing) ||
                        jsonCompare.property(res.body.status.syncTime , s.status.syncTime) ||
                        jsonCompare.property(res.body.status.totalFiles , s.status.totalFiles) ||
                        jsonCompare.property(res.body.library , s.library);
@@ -185,7 +182,7 @@ describe('sync api', function () {
         this.retries(6);
         this.timeout(1000);
         // Force a CPU block to wait. Kindof hacky, but for the sake of testing...
-        var end = new Date().getTime() + 500;
+        const end = new Date().getTime() + 500;
         while(new Date().getTime() < end);
 
         request
@@ -194,7 +191,7 @@ describe('sync api', function () {
             .expect('Content-Type', /json/)
             .expect(function(res) {
 
-                var r = jsonCompare.property(res.body.status.syncing , false) ||
+                let r = jsonCompare.property(res.body.status.syncing , false) ||
                        jsonCompare.property(res.body.library , s.library);
 
                 if(!r) {

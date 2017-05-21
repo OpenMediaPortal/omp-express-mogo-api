@@ -8,10 +8,10 @@
  * @author ojourmel
  */
 
-var fs = require('fs'),
-    yaml = require('js-yaml');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
-var config = {};
+let config = {};
 
 // A few constants can be set by the environment
 config.CONFIG_PATH = process.env.OMP_CONFIG_PATH || './omp-config.yml';
@@ -50,7 +50,7 @@ config.load = function() {
         this.raw = yaml.safeLoad(fs.readFileSync(this.CONFIG_PATH));
 
         // Sanitize config input
-        for (var l in this.raw.library) {
+        for (let l in this.raw.library) {
             if ((! this.raw.library[l].hasOwnProperty('libmime')) ||
                 (! this.raw.library[l].hasOwnProperty('libpath')) ||
                 (! (this.raw.library[l].libpath instanceof Array))) {

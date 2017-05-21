@@ -7,22 +7,19 @@
  * @author ojourmel
  */
 
-var express = require('express'),
-    logger = require('morgan'),
-    bodyParser = require('body-parser'),
-    multer = require('multer'),
-    mongoose = require('mongoose'),
-    config = require('./config'),
-    file = require('./routes/file'),
-    stream = require('./routes/stream'),
-    library = require('./routes/library'),
-    sync = require('./routes/sync'),
-    syncdb = require('./dao/sync'),
-    filedb = require('./dao/file');
+const express = require('express');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const config = require('./config');
+const file = require('./routes/file');
+const stream = require('./routes/stream');
+const library = require('./routes/library');
+const sync = require('./routes/sync');
 
 config.load();
 
-var app = express();
+let app = express();
 
 if ('development' == config.NODE_ENV) {
     app.use(logger('dev'));

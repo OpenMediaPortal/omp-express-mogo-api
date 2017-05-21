@@ -4,12 +4,12 @@
 * @author ojourmel
 */
 
-var request = require('supertest'),
-    jsonCompare = require('./jsonCompare'),
-    config = require('../config'),
-    fs = require('fs');
+const jsonCompare = require('./jsonCompare');
+const config = require('../config');
+const fs = require('fs');
+const buffer = require('buffer').Buffer;
 
-var file = require('../dao/file');
+const file = require('../dao/file');
 
 config.LIBRARY_ROOT = process.env.OMP_LIBRARY_ROOT;
 
@@ -18,7 +18,7 @@ describe('file parseJSON', function () {
     it('should reject bad libkey', function (done) {
         delete config.library.testlibkey;
 
-        var f = file.parseJSON('testlibkey', {}, null);
+        const f = file.parseJSON('testlibkey', {}, null);
 
         if (f != null) {
             throw new Error('Error: expected null file parsed from bad libkey. Got' + f);
@@ -30,8 +30,9 @@ describe('file parseJSON', function () {
     it('should reject null libmime', function (done) {
         config.library.testlibkey = {libmime: null, libpath: []};
 
+        let f;
         try {
-            var f = file.parseJSON('testlibkey', {}, null);
+            f = file.parseJSON('testlibkey', {}, null);
         } catch (e) {
             if (f != null) {
                 throw new Error('Error: expected null file parsed from bad libmime. Got' + f);
@@ -45,14 +46,14 @@ describe('file parseJSON', function () {
     it('should fill in valid basic data', function (done) {
         config.library.testlibkey = {libmime: 'test', libpath: []};
 
-        var body = {
+        const body = {
             library: 'testlibkey',
             name: 'testname',
             path: 'testpath',
             mimetype: 'testmimetype'
         };
 
-        var f = file.parseJSON('testlibkey', body, null);
+        let f = file.parseJSON('testlibkey', body, null);
 
         if (!f) {
             throw new Error('Error: null file');
@@ -60,7 +61,7 @@ describe('file parseJSON', function () {
 
         f = f.toObject();
 
-        var r = jsonCompare.property(f.library ,body.library ) ||
+        const r = jsonCompare.property(f.library ,body.library ) ||
                 jsonCompare.property(f.name, body.name) ||
                 jsonCompare.property(f.path, body.path) ||
                 jsonCompare.property(f.mimetype, body.mimetype);
@@ -76,7 +77,7 @@ describe('file parseJSON', function () {
     it('should fill in music data', function (done) {
         config.library.testlibkey = {libmime: 'audio', libpath: []};
 
-        var body = {
+        const body = {
             library: 'testlibkey',
             name: 'testname',
             path: 'testpath',
@@ -88,7 +89,7 @@ describe('file parseJSON', function () {
             length: '03'
         };
 
-        var f = file.parseJSON('testlibkey', body, null);
+        let f = file.parseJSON('testlibkey', body, null);
 
         if (!f) {
             throw new Error('Error: null file');
@@ -96,7 +97,7 @@ describe('file parseJSON', function () {
 
         f = f.toObject();
 
-        var r = jsonCompare.property(f.library ,body.library ) ||
+        const r = jsonCompare.property(f.library ,body.library ) ||
                 jsonCompare.property(f.name, body.name) ||
                 jsonCompare.property(f.path, body.path) ||
                 jsonCompare.property(f.mimetype, body.mimetype) ||
@@ -116,7 +117,7 @@ describe('file parseJSON', function () {
     it('should ignore extra data', function (done) {
         config.library.testlibkey = {libmime: 'test', libpath: []};
 
-        var body = {
+        const body = {
             library: 'testlibkey',
             name: 'testname',
             path: 'testpath',
@@ -127,7 +128,7 @@ describe('file parseJSON', function () {
             label: 'testlabel'
         };
 
-        var f = file.parseJSON('testlibkey', body, null);
+        let f = file.parseJSON('testlibkey', body, null);
 
         if (!f) {
             throw new Error('Error: null file');
@@ -135,7 +136,7 @@ describe('file parseJSON', function () {
 
         f = f.toObject();
 
-        var r = jsonCompare.property(f.library ,body.library ) ||
+        const r = jsonCompare.property(f.library ,body.library ) ||
                 jsonCompare.property(f.name, body.name) ||
                 jsonCompare.property(f.path, body.path) ||
                 jsonCompare.property(f.mimetype, body.mimetype) ||
@@ -155,7 +156,7 @@ describe('file parseJSON', function () {
     it('should overwrite given f object', function (done) {
         config.library.testlibkey = {libmime: 'test', libpath: []};
 
-        var body = {
+        const body = {
             library: 'testlibkey',
             name: 'testname',
             path: 'testpath',
@@ -166,13 +167,13 @@ describe('file parseJSON', function () {
             label: 'testlabel'
         };
 
-        var orig = new file({
+        const orig = new file({
             library: 'testlibkeyOrig',
             name: 'testnameOrig',
             path: 'testpathOrig'
         });
 
-        var f = file.parseJSON('testlibkey', body, orig);
+        let f = file.parseJSON('testlibkey', body, orig);
 
         if (!f) {
             throw new Error('Error: null file');
@@ -180,7 +181,7 @@ describe('file parseJSON', function () {
 
         f = f.toObject();
 
-        var r = jsonCompare.property(f.library ,body.library ) ||
+        const r = jsonCompare.property(f.library ,body.library ) ||
                 jsonCompare.property(f.name, body.name) ||
                 jsonCompare.property(f.path, body.path) ||
                 jsonCompare.property(f.mimetype, body.mimetype) ||
@@ -216,9 +217,9 @@ describe('file parsePath', function () {
 
         // This file doesn't exist, but since the libmime is not recognized by
         // dao/file.js, only the baisc information is processed.
-        var path = '/test/path.txt';
-        var name = 'path.txt';
-        var mime = 'text/plain';
+        const path = '/test/path.txt';
+        const name = 'path.txt';
+        const mime = 'text/plain';
 
         file.parsePath('testlibkey', name, path, mime, function(f) {
             if (!f) {
@@ -227,7 +228,7 @@ describe('file parsePath', function () {
 
             f = f.toObject();
 
-            var r = jsonCompare.property(f.library ,'testlibkey' ) ||
+            const r = jsonCompare.property(f.library ,'testlibkey' ) ||
                     jsonCompare.property(f.name, name) ||
                     jsonCompare.property(f.path, path) ||
                     jsonCompare.property(f.mimetype, mime);
@@ -245,13 +246,13 @@ describe('file parsePath', function () {
 
         // Because these tests are done directly to the code - and not through the docker container,
         // use local directory for test files.
-        config.library.music = {libmime: 'audio', libpath: ["./"]};
+        config.library.music = {libmime: 'audio', libpath: ['./']};
 
-        var path = './id3tagtest.mp3';
-        var name = 'id3tagtest.mp3';
-        var mime = 'audio/mpeg';
+        const path = './id3tagtest.mp3';
+        const name = 'id3tagtest.mp3';
+        const mime = 'audio/mpeg';
 
-        var t = {
+        const t = {
             title: 'Id3TestTitle',
             album: 'Id3TestAlbum',
             artist: 'Id3TestArtist',
@@ -263,7 +264,7 @@ describe('file parsePath', function () {
         };
 
         // A valid mp3 file, with the above id3 tags is contained in the following hex string:
-        var id3data = Buffer.from('4944330400000000090d545045310000000e00000049643354657374417274697374544954320000000d000000496433546573745469746c6554414c420000000d00000049643354657374416c62756d434f4d4d000000130000005858580049643354657374436f6d6d656e7454434f4e00000005000000526f636b5444524300000005000000313936395452434b000000020000003200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000544147496433546573745469746c6500000000000000000000000000000000000049643354657374417274697374000000000000000000000000000000000049643354657374416c62756d0000000000000000000000000000000000003139363949643354657374436f6d6d656e740000000000000000000000000000000211','hex');
+        const id3data = buffer.from('4944330400000000090d545045310000000e00000049643354657374417274697374544954320000000d000000496433546573745469746c6554414c420000000d00000049643354657374416c62756d434f4d4d000000130000005858580049643354657374436f6d6d656e7454434f4e00000005000000526f636b5444524300000005000000313936395452434b000000020000003200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000544147496433546573745469746c6500000000000000000000000000000000000049643354657374417274697374000000000000000000000000000000000049643354657374416c62756d0000000000000000000000000000000000003139363949643354657374436f6d6d656e740000000000000000000000000000000211','hex');
 
         fs.closeSync(fs.openSync(path, 'w'));
         fs.writeFileSync(path, id3data);
@@ -280,7 +281,7 @@ describe('file parsePath', function () {
 
             f = f.toObject();
 
-            var r = jsonCompare.property(f.library ,'music' ) ||
+            const r = jsonCompare.property(f.library ,'music' ) ||
                     jsonCompare.property(f.name, name) ||
                     jsonCompare.property(f.path, path) ||
                     jsonCompare.property(f.mimetype, mime) ||
@@ -290,7 +291,7 @@ describe('file parsePath', function () {
                     jsonCompare.property(f.year, t.year) ||
                     jsonCompare.property(f.genre, t.genre) ||
                     // Track should be zero padded
-                    jsonCompare.property(f.track, 02) ||
+                    jsonCompare.property(f.track, '02') ||
                     // Length is derrived by actual song data, not id3 tags
                     jsonCompare.property(f.length, null) ||
                     jsonCompare.property(f.comment, null);

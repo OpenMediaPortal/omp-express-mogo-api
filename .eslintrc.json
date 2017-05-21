@@ -1,11 +1,17 @@
 {
     "env": {
         "browser": true,
+        "commonjs": true,
         "es6": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module"
+    },
+    "globals": {
+        "process": false,
+        "it": false,
+        "describe": false
     },
     "rules": {
         "indent": [
@@ -23,6 +29,15 @@
         "semi": [
             "error",
             "always"
+        ],
+        "no-console": [
+            0
+        ],
+        "no-var": [
+            "error"
+        ],
+        "no-unused-vars": [
+            "error", { "argsIgnorePattern": "res|req" }
         ]
     }
 }

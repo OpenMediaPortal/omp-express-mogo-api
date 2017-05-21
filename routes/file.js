@@ -5,11 +5,11 @@
  * @author ojourmel
  */
 
-var file = require('../dao/file'),
-    config = require('../config'),
-    url = require('url');
+const file = require('../dao/file');
+const config = require('../config');
+const url = require('url');
 
-var typeJson = new RegExp('^application/json');
+const typeJson = new RegExp('^application/json');
 
 
 /**
@@ -17,7 +17,7 @@ var typeJson = new RegExp('^application/json');
  *
  */
 exports.index = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
@@ -56,24 +56,24 @@ exports.index = function(req, res) {
      *  }
      *
      */
-    var f = {
+    const f = {
         group: [],
         index: {},
         lookup: {},
         files: []
     };
-    var group = req.query.group;
-    var sort = req.query.sort;
+    let group = req.query.group;
+    let sort = req.query.sort;
 
     // Sort object passed to Mongo (GroupSort)
-    var gs = {};
+    let gs = {};
 
     // Sort flat results by group first
     // use 'truthy' check for group and sort
     if ( group ) {
         group = group.split(',');
 
-        for (var i=0; i<group.length; i++) {
+        for (let i=0; i<group.length; i++) {
             gs[group[i]] = 1;
             f.index[group[i]] = {};
         }
@@ -86,7 +86,7 @@ exports.index = function(req, res) {
     // applied within each subgroup of the grouping
     if ( sort ) {
         sort = sort.split(',');
-        for (var i=0; i<sort.length; i++) {
+        for (let i=0; i<sort.length; i++) {
             // Support only alphabetical A-Z for now
             // Use -1 for Z-A
             gs[sort[i]] = 1;
@@ -106,9 +106,9 @@ exports.index = function(req, res) {
 
             // Build the index. Brute force update each group
             // info for each file
-            for (var i=0; i<f.files.length; i++) {
-                for (var j=0; j<group.length; j++) {
-                    var key = f.files[i][group[j]];
+            for (let i=0; i<f.files.length; i++) {
+                for (let j=0; j<group.length; j++) {
+                    const key = f.files[i][group[j]];
 
                     if ( key ) {
                         // Group does not exist in index.
@@ -116,7 +116,7 @@ exports.index = function(req, res) {
                         if (f.index[group[j]][key] == null) {
                             f.index[group[j]][key] = [[i,i]];
                         } else {
-                            var last = f.index[group[j]][key].pop();
+                            let last = f.index[group[j]][key].pop();
                             // This file is adjacent to the current group entry
                             // Modify it from [[x,y], [x,i]]
                             if ((last[1]+1) == i) {
@@ -143,7 +143,7 @@ exports.index = function(req, res) {
  *
  */
 exports.show = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
@@ -162,7 +162,7 @@ exports.show = function(req, res) {
  *
  */
 exports.create = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
@@ -170,14 +170,14 @@ exports.create = function(req, res) {
         return res.status(415).send({'error':'Unsupported Media Type'});
     }
 
-    var f = file.parseJSON(libkey, req.body);
+    const f = file.parseJSON(libkey, req.body);
     if (f.library && f.name && f.path && f.mimetype) {
         f.save(function(err){
             if (err) {
                 res.status(500).send([{'error':'Internal Server Error'},
                                      {'error':err}]);
             }
-            var loc = url.format(
+            let loc = url.format(
                 {
                     protocol: req.protocol,
                     host: req.get('host'),
@@ -197,7 +197,7 @@ exports.create = function(req, res) {
  *
  */
 exports.update = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
@@ -233,7 +233,7 @@ exports.update = function(req, res) {
  *
  */
 exports.destroy = function(req, res) {
-    var libkey = req.params.libkey;
+    const libkey = req.params.libkey;
     if (! config.library.hasOwnProperty(libkey)) {
         return res.status(404).send({'error':'Not Found'});
     }
